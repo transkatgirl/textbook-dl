@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { download as downloadOpenstax } from "./openstax";
 import { download as downloadLibretexts } from "./libretexts";
 
@@ -42,7 +43,6 @@ switch (address.host) {
 	case "stats.libretexts.org":
 	case "ukrayinska.libretexts.org":
 	case "workforce.libretexts.org":
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		downloadPromise = downloadLibretexts(address).catch((error) => {
 			console.log("Download Error: " + error);
 			process.exit(1);
