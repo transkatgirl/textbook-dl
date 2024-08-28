@@ -2,15 +2,6 @@ import { Builder, Browser, By } from "selenium-webdriver";
 import { Options } from "selenium-webdriver/chrome";
 
 export async function download(address: URL) {
-	if (
-		!(
-			address.pathname.startsWith("/Courses/") ||
-			address.pathname.startsWith("/Bookshelves/")
-		)
-	) {
-		throw "Invalid URL!";
-	}
-
 	console.log("Starting WebDriver...");
 
 	const options = new Options();
@@ -24,8 +15,7 @@ export async function download(address: URL) {
 	console.log("Loading URL " + address.href);
 	await driver.get(address.href);
 
-	console.log("\nWaiting 5 seconds for page to load...");
-	await new Promise((resolve) => setTimeout(resolve, 5000));
+	await new Promise((resolve) => setTimeout(resolve, 3000));
 
 	await driver.manage().setTimeouts({ implicit: 3000 });
 

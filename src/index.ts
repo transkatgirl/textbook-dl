@@ -43,6 +43,14 @@ let downloadPromise: Promise<void>;
 
 switch (address.host) {
 	case "openstax.org":
+		address.search = "";
+		address.hash = "";
+
+		if (!address.pathname.startsWith("/books/")) {
+			console.log("Invalid URL!");
+			process.exit(1);
+		}
+
 		downloadPromise = downloadOpenstax(address)
 			.then((items) => console.log(items))
 			.catch((error) => {
@@ -66,6 +74,19 @@ switch (address.host) {
 	case "stats.libretexts.org":
 	case "ukrayinska.libretexts.org":
 	case "workforce.libretexts.org":
+		address.search = "";
+		address.hash = "";
+
+		if (
+			!(
+				address.pathname.startsWith("/Courses/") ||
+				address.pathname.startsWith("/Bookshelves/")
+			)
+		) {
+			console.log("Invalid URL!");
+			process.exit(1);
+		}
+
 		downloadPromise = downloadLibretexts(address).catch((error) => {
 			console.log("Download Error: " + error);
 			process.exit(1);
