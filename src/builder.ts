@@ -9,11 +9,12 @@ export interface RawTextbookMetadata {
 	authors?: string[];
 	publisher?: string;
 	language?: string;
+	url?: string;
 }
 
 export interface RawNavItem {
 	label: string;
-	href: string;
+	href?: string;
 	subitems: RawNavItem[];
 }
 

@@ -21,7 +21,7 @@ export async function download(address: URL) {
 	const titleElement = await driver.findElement(
 		By.css('[data-testid="bookbanner"] a[data-testid="details-link-expanded"]')
 	);
-	const bookTitle = await titleElement.getAttribute("innerText");
+	const bookTitle = await titleElement.getText();
 	const bookAddress = await titleElement.getAttribute("href");
 
 	console.log(bookTitle + " by OpenStax - " + bookAddress);
@@ -44,15 +44,15 @@ export async function download(address: URL) {
 	}
 
 	console.log("Attempting to get page list...");
-	const tocItems = await toc.findElements(
-		By.css('li[data-type="page"] > a span.os-text')
-	);
+	const tocItems = await toc.findElements(By.css('li[data-type="page"] > a'));
 
 	const archivedItems = [];
 
 	for (const item of tocItems) {
 		if (await item.isDisplayed()) {
-			const contentTitle = await item.getText();
+			const contentTitle = await item
+				.getText()
+				.then((text) => text.replace(/(\r\n|\n|\r)/gm, " "));
 
 			await item.click();
 

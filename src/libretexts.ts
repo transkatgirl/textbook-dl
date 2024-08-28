@@ -32,7 +32,7 @@ export async function download(address: URL) {
 	const titleElement = await driver.findElement(
 		By.css("#elm-main-content #title")
 	);
-	const bookTitle = await titleElement.getAttribute("innerText");
+	const bookTitle = await titleElement.getText();
 
 	const authorElement = await driver.findElements(
 		By.css(".mt-author-container .mt-author-programname")
@@ -40,7 +40,7 @@ export async function download(address: URL) {
 	if (authorElement.length != 1) {
 		throw "URL must be to the book's root!";
 	}
-	const bookAuthor = await authorElement[0].getAttribute("innerText");
+	const bookAuthor = await authorElement[0].getText();
 
 	console.log(bookTitle + " by " + bookAuthor + " - " + address);
 
