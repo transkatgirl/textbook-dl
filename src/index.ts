@@ -18,27 +18,6 @@ try {
 
 address.protocol = "https";
 
-/* current plan:
-
-- return a RawTextbook object, which is then used to build an EPUB
-	- fields:
-		- toc: RawNav
-		- pages: RawPage[]
-- RawNav
-	- fields:
-		- items: RawNavItem[]
-- RawNavItem
-	- fields:
-		- label: string
-		- filename: string
-		- subitems: RawNavItem[]
-- RawPage
-	- fields:
-		- filename: string
-		- data: string
-
-*/
-
 let downloadPromise: Promise<void>;
 
 switch (address.host) {
@@ -51,12 +30,10 @@ switch (address.host) {
 			process.exit(1);
 		}
 
-		downloadPromise = downloadOpenstax(address)
-			.then((items) => console.log(items))
-			.catch((error) => {
-				console.log("Download Error: " + error);
-				process.exit(1);
-			});
+		downloadPromise = downloadOpenstax(address).catch((error) => {
+			console.log("Download Error: " + error);
+			process.exit(1);
+		});
 		break;
 	case "bio.libretexts.org":
 	case "biz.libretexts.org":

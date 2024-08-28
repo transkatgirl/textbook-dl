@@ -78,7 +78,7 @@ export async function download(address: URL) {
 
 	await driver.quit();
 
-	return archivedItems;
+	//return archivedItems;
 }
 
 async function initPage(driver: WebDriver) {
