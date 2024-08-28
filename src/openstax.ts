@@ -2,6 +2,8 @@ import { Builder, Browser, By, WebDriver } from "selenium-webdriver";
 import { Options } from "selenium-webdriver/chrome";
 
 export async function download(address: URL) {
+	console.log("Starting WebDriver...");
+
 	const options = new Options();
 	options.addArguments("--window-size=1600,1200");
 	const driver = await new Builder()
@@ -10,14 +12,21 @@ export async function download(address: URL) {
 		.build();
 	await driver.manage().setTimeouts({ implicit: 3000 });
 
+	console.log("Loading page " + address.href);
 	await driver.get(address.href);
 
-	await cleanPage(driver);
+	await initPage(driver);
 
 	console.log("Attempting to find table of contents...");
 	const toc = await driver.findElement(By.css('nav[data-testid="toc"] > ol'));
 
 	const tocItems = await toc.findElements(By.css('li[data-type="page"] > a'));
+
+	for (const item of tocItems) {
+		item.click();
+
+		await initPage(driver);
+	}
 
 	console.log(tocItems.length);
 
@@ -34,15 +43,19 @@ export async function download(address: URL) {
 		await new Promise((resolve) => setTimeout(resolve, 5000));
 	}*/
 
+	//const contentHTML = await main.getAttribute("innerHTML");
+}
+
+async function getPage(driver: WebDriver) {
 	console.log("Attempting to find page content...");
 	const main = await driver.findElement(
 		By.css('#main-content > [data-type="page"]')
 	);
 
-	//const contentHTML = await main.getAttribute("innerHTML");
+	return await main.getAttribute("innerHTML");
 }
 
-async function cleanPage(driver: WebDriver) {
+async function initPage(driver: WebDriver) {
 	console.log("Waiting 5 seconds for page to load...");
 	await new Promise((resolve) => setTimeout(resolve, 5000));
 
@@ -67,7 +80,9 @@ async function cleanPage(driver: WebDriver) {
 	const buttons = buttons_1.concat(buttons_2).concat(buttons_3);
 
 	for (const button of buttons) {
-		await button.click();
+		if (await button.isDisplayed()) {
+			await button.click();
+		}
 
 		await new Promise((resolve) => setTimeout(resolve, 2000));
 	}
