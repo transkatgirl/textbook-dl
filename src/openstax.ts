@@ -12,7 +12,7 @@ export async function download(address: URL) {
 		.build();
 	await driver.manage().setTimeouts({ implicit: 3000 });
 
-	console.log("Loading page " + address.href);
+	console.log("Loading URL " + address.href);
 	await driver.get(address.href);
 
 	await initPage(driver);
@@ -20,43 +20,45 @@ export async function download(address: URL) {
 	console.log("Attempting to find table of contents...");
 	const toc = await driver.findElement(By.css('nav[data-testid="toc"] > ol'));
 
-	const tocItems = await toc.findElements(By.css('li[data-type="page"] > a'));
+	for (let i = 0; i < 3; i++) {
+		console.log(
+			"Attempting to expand table of contents (iteration " + (i + 1) + ")..."
+		);
 
-	for (const item of tocItems) {
-		item.click();
+		const items = await toc.findElements(By.css("details:not([open])"));
 
-		await initPage(driver);
+		for (const item of items) {
+			if (await item.isDisplayed()) {
+				await item.click();
+			}
+		}
 	}
 
-	console.log(tocItems.length);
-
-	/*const tocItems = await driver.findElements(
-		By.css('li[data-type="chapter"] > details')
-	);*/
-
-	/*const tocItems = await toc.findElements(By.xpath("./child::*"));
-
-	for (const item of tocItems) {
-		await item.click();
-
-		console.log("Waiting 5 seconds for page to load...");
-		await new Promise((resolve) => setTimeout(resolve, 5000));
-	}*/
-
-	//const contentHTML = await main.getAttribute("innerHTML");
-}
-
-async function getPage(driver: WebDriver) {
-	console.log("Attempting to find page content...");
-	const main = await driver.findElement(
-		By.css('#main-content > [data-type="page"]')
+	const tocItems = await toc.findElements(
+		By.css('li[data-type="page"] > a span.os-text')
 	);
 
-	return await main.getAttribute("innerHTML");
+	for (const item of tocItems) {
+		if (await item.isDisplayed()) {
+			const contentTitle = await item.getText();
+
+			await item.click();
+
+			await initPage(driver);
+
+			console.log("Attempting to get page content...");
+			const main = await driver.findElement(By.id("main-content"));
+
+			const contentURL = await driver.getCurrentUrl();
+			const contentHTML = await main.getAttribute("innerHTML");
+
+			console.log("Archived " + contentTitle + " at " + contentURL);
+		}
+	}
 }
 
 async function initPage(driver: WebDriver) {
-	console.log("Waiting 5 seconds for page to load...");
+	console.log("\nWaiting 5 seconds for page to load...");
 	await new Promise((resolve) => setTimeout(resolve, 5000));
 
 	await driver.manage().setTimeouts({ implicit: 500 });
@@ -82,9 +84,9 @@ async function initPage(driver: WebDriver) {
 	for (const button of buttons) {
 		if (await button.isDisplayed()) {
 			await button.click();
-		}
 
-		await new Promise((resolve) => setTimeout(resolve, 2000));
+			await new Promise((resolve) => setTimeout(resolve, 3000));
+		}
 	}
 
 	await driver.manage().setTimeouts({ implicit: 3000 });
