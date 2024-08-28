@@ -13,5 +13,9 @@
 		"globals": "^15.9.0",
 		"typescript": "^5.5.4",
 		"typescript-eslint": "^8.3.0"
+	},
+	"dependencies": {
+		"mocha": "10.7.3",
+		"selenium-webdriver": "^4.23.0"
 	}
 }
