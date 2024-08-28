@@ -22,10 +22,12 @@ let downloadPromise: Promise<void>;
 
 switch (address.host) {
 	case "openstax.org":
-		downloadPromise = downloadOpenstax(address).catch((error) => {
-			console.log("Download Error: " + error);
-			process.exit(1);
-		});
+		downloadPromise = downloadOpenstax(address)
+			.then((items) => console.log(items))
+			.catch((error) => {
+				console.log("Download Error: " + error);
+				process.exit(1);
+			});
 		break;
 	case "bio.libretexts.org":
 	case "biz.libretexts.org":

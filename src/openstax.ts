@@ -42,6 +42,8 @@ export async function download(address: URL) {
 		By.css('li[data-type="page"] > a span.os-text')
 	);
 
+	const archivedItems = [];
+
 	for (const item of tocItems) {
 		if (await item.isDisplayed()) {
 			const contentTitle = await item.getText();
@@ -57,8 +59,20 @@ export async function download(address: URL) {
 			const contentHTML = await main.getAttribute("innerHTML");
 
 			console.log("Archived " + contentTitle + " at " + contentURL);
+
+			archivedItems.push({
+				url: contentURL,
+				title: contentTitle,
+				content: contentHTML,
+			});
+
+			//console.log("\n\n" + contentHTML);
 		}
 	}
+
+	await driver.quit();
+
+	return archivedItems;
 }
 
 async function initPage(driver: WebDriver) {
