@@ -17,14 +17,14 @@ try {
 
 address.protocol = "https";
 
+let downloadPromise: Promise<void>;
+
 switch (address.host) {
 	case "openstax.org":
-		try {
-			downloadOpenstax(address);
-		} catch (error) {
+		downloadPromise = downloadOpenstax(address).catch((error) => {
 			console.log("Download Error: " + error);
 			process.exit(1);
-		}
+		});
 		break;
 	case "bio.libretexts.org":
 	case "biz.libretexts.org":
@@ -42,12 +42,11 @@ switch (address.host) {
 	case "stats.libretexts.org":
 	case "ukrayinska.libretexts.org":
 	case "workforce.libretexts.org":
-		try {
-			downloadLibretexts(address);
-		} catch (error) {
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		downloadPromise = downloadLibretexts(address).catch((error) => {
 			console.log("Download Error: " + error);
 			process.exit(1);
-		}
+		});
 		break;
 	default:
 		console.log("The requested website is not supported by this script!");

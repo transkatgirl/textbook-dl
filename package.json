@@ -9,6 +9,7 @@
 	"devDependencies": {
 		"@eslint/js": "^9.9.1",
 		"@types/node": "^22.5.1",
+		"@types/selenium-webdriver": "^4.1.26",
 		"eslint": "^9.9.1",
 		"globals": "^15.9.0",
 		"typescript": "^5.5.4",
