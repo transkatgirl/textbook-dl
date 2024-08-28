@@ -54,5 +54,40 @@ export async function download(address: URL) {
 
 	console.log(bookTitle + " by " + bookAuthor + " - " + address);
 
+	console.log("Attempting to find table of contents...");
+	const contentsButton = await driver.findElement(
+		By.css('#sbHeader button[title="Open contents panel"]')
+	);
+	await contentsButton.click();
+
+	await new Promise((resolve) => setTimeout(resolve, 3000));
+
+	const toc = await driver.findElement(
+		By.css("#LibreTextsSidebar .toc-hierarchy > ul.ui-fancytree")
+	);
+
+	for (let i = 0; i < 4; i++) {
+		console.log(
+			"Attempting to expand table of contents (iteration " + (i + 1) + ")..."
+		);
+
+		const items = await toc.findElements(
+			By.css(
+				'.fancytree-has-children:not(.fancytree-expanded) > [role="button"].fancytree-expander'
+			)
+		);
+
+		for (const item of items) {
+			if (await item.isDisplayed()) {
+				await item.click();
+				await driver.executeScript("arguments[0].scrollIntoView(true);", item);
+
+				await new Promise((resolve) => setTimeout(resolve, 3000));
+			}
+		}
+	}
+
+	console.log(toc);
+
 	// await driver.quit();
 }
