@@ -2,6 +2,10 @@ import { Builder, Browser, By, WebDriver } from "selenium-webdriver";
 import { Options } from "selenium-webdriver/chrome";
 
 export async function download(address: URL) {
+	if (!address.pathname.startsWith("/books/")) {
+		throw "Invalid URL!";
+	}
+
 	console.log("Starting WebDriver...");
 
 	const options = new Options();
