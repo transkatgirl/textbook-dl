@@ -8,10 +8,9 @@
 	"author": "transkatgirl",
 	"devDependencies": {
 		"@eslint/js": "^9.9.1",
+		"@types/node": "^22.5.1",
 		"eslint": "^9.9.1",
 		"globals": "^15.9.0",
-		"ts-node": "^10.9.2",
-		"tsx": "^4.19.0",
 		"typescript": "^5.5.4",
 		"typescript-eslint": "^8.3.0"
 	}
