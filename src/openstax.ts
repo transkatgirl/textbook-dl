@@ -21,6 +21,15 @@ export async function download(address: URL) {
 
 	await initPage(driver);
 
+	console.log("Attempting to find book title...");
+	const titleElement = await driver.findElement(
+		By.css('[data-testid="bookbanner"] a[data-testid="details-link-expanded"]')
+	);
+	const bookTitle = await titleElement.getAttribute("innerText");
+	const bookAddress = await titleElement.getAttribute("href");
+
+	console.log(bookTitle + " - " + bookAddress);
+
 	console.log("Attempting to find table of contents...");
 	const toc = await driver.findElement(By.css('nav[data-testid="toc"] > ol'));
 
