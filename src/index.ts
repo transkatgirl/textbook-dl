@@ -18,6 +18,27 @@ try {
 
 address.protocol = "https";
 
+/* current plan:
+
+- return a RawTextbook object, which is then used to build an EPUB
+	- fields:
+		- toc: RawNav
+		- pages: RawPage[]
+- RawNav
+	- fields:
+		- items: RawNavItem[]
+- RawNavItem
+	- fields:
+		- label: string
+		- filename: string
+		- subitems: RawNavItem[]
+- RawPage
+	- fields:
+		- filename: string
+		- data: string
+
+*/
+
 let downloadPromise: Promise<void>;
 
 switch (address.host) {

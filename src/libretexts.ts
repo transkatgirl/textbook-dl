@@ -26,4 +26,8 @@ export async function download(address: URL) {
 
 	console.log("\nWaiting 5 seconds for page to load...");
 	await new Promise((resolve) => setTimeout(resolve, 5000));
+
+	await driver.manage().setTimeouts({ implicit: 3000 });
+
+	// await driver.quit();
 }
