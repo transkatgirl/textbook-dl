@@ -87,6 +87,16 @@ export async function download(address: URL) {
 		}
 	}
 
+	console.log("Attempting to get page list...");
+	const tocItems = await toc.findElements(By.css(".fancytree-node a"));
+
+	for (const item of tocItems) {
+		const contentTitle = await item.getText();
+		const contentURL = await item.getAttribute("href");
+
+		console.log(contentTitle + " - " + contentURL);
+	}
+
 	console.log(toc);
 
 	// await driver.quit();

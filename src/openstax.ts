@@ -47,7 +47,7 @@ export async function download(address: URL) {
 		}
 	}
 
-	console.log("Attempting to get pages...");
+	console.log("Attempting to get page list...");
 	const tocItems = await toc.findElements(
 		By.css('li[data-type="page"] > a span.os-text')
 	);
