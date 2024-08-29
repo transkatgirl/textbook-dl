@@ -43,6 +43,22 @@ export async function download(address: URL) {
 		}
 	}
 
+	console.log("Attempting to get chapter list...");
+
+	const tocChapterItems = await toc.findElements(By.css("details > summary"));
+
+	const chapterLabels = [];
+
+	for (const item of tocChapterItems) {
+		const label = await item
+			.getText()
+			.then((text) => text.replace(/(\r\n|\n|\r)/gm, " "));
+
+		chapterLabels.push(label);
+	}
+
+	//console.log(chapterLabels);
+
 	console.log("Attempting to get page list...");
 	const tocItems = await toc.findElements(By.css('li[data-type="page"] > a'));
 
