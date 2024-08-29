@@ -57,12 +57,21 @@ export async function download(address: URL) {
 		chapterLabels.push(label);
 	}
 
-	//console.log(chapterLabels);
-
 	console.log("Attempting to get page list...");
 	const tocItems = await toc.findElements(By.css('li[data-type="page"] > a'));
 
+	for (const item of tocItems) {
+		const contentTitle = await item
+			.getText()
+			.then((text) => text.replace(/(\r\n|\n|\r)/gm, " "));
+		const contentURL = await item.getAttribute("href");
+
+		console.log(contentTitle + " - " + contentURL);
+	}
+
+	/*
 	const archivedItems = [];
+
 
 	for (const item of tocItems) {
 		if (await item.isDisplayed()) {
@@ -90,7 +99,7 @@ export async function download(address: URL) {
 
 			//console.log("\n\n" + contentHTML);
 		}
-	}
+	}*/
 
 	await driver.quit();
 
