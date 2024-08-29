@@ -11,14 +11,11 @@ export async function download(address: URL) {
 		.forBrowser(Browser.CHROME)
 		.setChromeOptions(options)
 		.build();
-	await driver.manage().setTimeouts({ implicit: 3000 });
 
 	console.log("Loading URL " + address.href);
 	await driver.get(address.href);
 
 	await initPage(driver);
-
-	await driver.manage().setTimeouts({ implicit: 3000 });
 
 	console.log("Attempting to find book title...");
 	const activeBreadcrumb = await driver.findElements(
@@ -101,7 +98,9 @@ export async function download(address: URL) {
 	console.log(tocHTML);
 }
 
-async function initPage(_driver: WebDriver) {
+async function initPage(driver: WebDriver) {
 	console.log("\nWaiting 6 seconds for page to load...");
 	await new Promise((resolve) => setTimeout(resolve, 6000));
+
+	await driver.manage().setTimeouts({ implicit: 3000 });
 }

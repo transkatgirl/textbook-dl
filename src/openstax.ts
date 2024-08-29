@@ -11,7 +11,6 @@ export async function download(address: URL) {
 		.forBrowser(Browser.CHROME)
 		.setChromeOptions(options)
 		.build();
-	await driver.manage().setTimeouts({ implicit: 3000 });
 
 	console.log("Loading URL " + address.href);
 	await driver.get(address.href);
