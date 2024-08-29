@@ -1,5 +1,6 @@
 import { Builder, Browser, By, WebDriver } from "selenium-webdriver";
 import { Options } from "selenium-webdriver/chrome";
+import { JSDOM } from "jsdom";
 
 export async function download(address: URL) {
 	console.log("Starting WebDriver...");
@@ -29,7 +30,7 @@ export async function download(address: URL) {
 	console.log("Attempting to find table of contents...");
 	const toc = await driver.findElement(By.css('nav[data-testid="toc"] > ol'));
 
-	for (let i = 0; i < 3; i++) {
+	for (let i = 0; i < 4; i++) {
 		console.log(
 			"Attempting to expand table of contents (iteration " + (i + 1) + ")..."
 		);
@@ -44,6 +45,8 @@ export async function download(address: URL) {
 	}
 
 	const tocHTML = await toc.getAttribute("innerHTML");
+
+	await driver.quit();
 
 	/*console.log("Attempting to get page list...");
 	const tocItems = await toc.findElements(By.css('li[data-type="page"] > a'));
@@ -69,9 +72,11 @@ export async function download(address: URL) {
 		}
 	}*/
 
-	console.log(tocHTML);
+	console.log("Parsing table of contents...");
 
-	await driver.quit();
+	const dom = new JSDOM("<!DOCTYPE html><body>" + tocHTML + "</body>");
+
+	console.log(tocHTML);
 
 	//return archivedItems;
 }

@@ -1,5 +1,6 @@
-import { Builder, Browser, By } from "selenium-webdriver";
+import { Builder, Browser, By, WebDriver } from "selenium-webdriver";
 import { Options } from "selenium-webdriver/chrome";
+import { JSDOM } from "jsdom";
 
 export async function download(address: URL) {
 	console.log("Starting WebDriver...");
@@ -15,7 +16,7 @@ export async function download(address: URL) {
 	console.log("Loading URL " + address.href);
 	await driver.get(address.href);
 
-	await new Promise((resolve) => setTimeout(resolve, 3000));
+	await initPage(driver);
 
 	await driver.manage().setTimeouts({ implicit: 3000 });
 
@@ -79,6 +80,8 @@ export async function download(address: URL) {
 
 	const tocHTML = await toc.getAttribute("innerHTML");
 
+	await driver.quit();
+
 	/*console.log("Attempting to get page list...");
 	const tocItems = await toc.findElements(By.css(".fancytree-node a"));
 
@@ -91,7 +94,14 @@ export async function download(address: URL) {
 
 	console.log(toc);*/
 
-	console.log(tocHTML);
+	console.log("Parsing table of contents...");
 
-	await driver.quit();
+	const dom = new JSDOM("<!DOCTYPE html><body>" + tocHTML + "</body>");
+
+	console.log(tocHTML);
+}
+
+async function initPage(_driver: WebDriver) {
+	console.log("\nWaiting 6 seconds for page to load...");
+	await new Promise((resolve) => setTimeout(resolve, 6000));
 }
