@@ -77,7 +77,9 @@ export async function download(address: URL) {
 		}
 	}
 
-	console.log("Attempting to get page list...");
+	const tocHTML = await toc.getAttribute("innerHTML");
+
+	/*console.log("Attempting to get page list...");
 	const tocItems = await toc.findElements(By.css(".fancytree-node a"));
 
 	for (const item of tocItems) {
@@ -87,7 +89,9 @@ export async function download(address: URL) {
 		console.log(contentTitle + " - " + contentURL);
 	}
 
-	console.log(toc);
+	console.log(toc);*/
 
-	// await driver.quit();
+	console.log(tocHTML);
+
+	await driver.quit();
 }

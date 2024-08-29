@@ -5,10 +5,8 @@ export interface RawTextbookIndex {
 
 export interface RawTextbookMetadata {
 	title: string;
-	authors?: string[];
-	publisher?: string;
-	language?: string;
-	url?: string;
+	author: string;
+	url: string;
 }
 
 export interface RawNavItem {

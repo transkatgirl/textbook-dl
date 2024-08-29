@@ -45,7 +45,7 @@ export async function download(address: URL) {
 
 	const tocHTML = await toc.getAttribute("innerHTML");
 
-	console.log("Attempting to get page list...");
+	/*console.log("Attempting to get page list...");
 	const tocItems = await toc.findElements(By.css('li[data-type="page"] > a'));
 
 	const pages = new Map();
@@ -67,7 +67,9 @@ export async function download(address: URL) {
 
 			pages.set(contentURL, contentHTML);
 		}
-	}
+	}*/
+
+	console.log(tocHTML);
 
 	await driver.quit();
 
