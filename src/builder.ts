@@ -1,7 +1,6 @@
-export interface RawTextbook {
+export interface RawTextbookIndex {
 	meta: RawTextbookMetadata;
 	nav: RawNavItem[];
-	pages: Map<string, string>;
 }
 
 export interface RawTextbookMetadata {
@@ -18,4 +17,7 @@ export interface RawNavItem {
 	subitems: RawNavItem[];
 }
 
-export function buildTextbook(input: RawTextbook) {}
+export function buildTextbook(
+	input: RawTextbookIndex,
+	pages: Map<string, string>
+) {}
