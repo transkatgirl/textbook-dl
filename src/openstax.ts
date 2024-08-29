@@ -43,41 +43,16 @@ export async function download(address: URL) {
 		}
 	}
 
-	console.log("Attempting to get chapter list...");
-
-	const tocChapterItems = await toc.findElements(By.css("details > summary"));
-
-	const chapterLabels = [];
-
-	for (const item of tocChapterItems) {
-		const label = await item
-			.getText()
-			.then((text) => text.replace(/(\r\n|\n|\r)/gm, " "));
-
-		chapterLabels.push(label);
-	}
+	const tocHTML = await toc.getAttribute("innerHTML");
 
 	console.log("Attempting to get page list...");
 	const tocItems = await toc.findElements(By.css('li[data-type="page"] > a'));
 
-	for (const item of tocItems) {
-		const contentTitle = await item
-			.getText()
-			.then((text) => text.replace(/(\r\n|\n|\r)/gm, " "));
-		const contentURL = await item.getAttribute("href");
-
-		console.log(contentTitle + " - " + contentURL);
-	}
-
-	/*
-	const archivedItems = [];
-
+	const pages = new Map();
 
 	for (const item of tocItems) {
 		if (await item.isDisplayed()) {
-			const contentTitle = await item
-				.getText()
-				.then((text) => text.replace(/(\r\n|\n|\r)/gm, " "));
+			const contentURL = await item.getAttribute("href");
 
 			await item.click();
 
@@ -86,20 +61,13 @@ export async function download(address: URL) {
 			console.log("Attempting to get page content...");
 			const main = await driver.findElement(By.id("main-content"));
 
-			const contentURL = await driver.getCurrentUrl();
 			const contentHTML = await main.getAttribute("innerHTML");
 
-			console.log("Archived " + contentTitle + " at " + contentURL);
+			console.log("Archived " + contentURL);
 
-			archivedItems.push({
-				url: contentURL,
-				title: contentTitle,
-				content: contentHTML,
-			});
-
-			//console.log("\n\n" + contentHTML);
+			pages.set(contentURL, contentHTML);
 		}
-	}*/
+	}
 
 	await driver.quit();
 
