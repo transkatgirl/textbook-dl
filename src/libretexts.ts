@@ -93,9 +93,16 @@ export async function download(address: URL) {
 
 	console.log("Parsing table of contents...");
 
-	const dom = new JSDOM("<!DOCTYPE html><body>" + tocHTML + "</body>");
+	const dom = new JSDOM(
+		'<!DOCTYPE html><body><ul id="toc-root">' + tocHTML + "</ul></body>"
+	);
+	const document = dom.window.document;
 
-	console.log(tocHTML);
+	const tocRoot = document.getElementById("toc-root");
+
+	if (tocRoot) {
+		return parseToc(tocRoot);
+	}
 }
 
 async function initPage(driver: WebDriver) {
@@ -104,3 +111,5 @@ async function initPage(driver: WebDriver) {
 
 	await driver.manage().setTimeouts({ implicit: 3000 });
 }
+
+function parseToc(root: HTMLElement) {}

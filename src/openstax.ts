@@ -73,11 +73,16 @@ export async function download(address: URL) {
 
 	console.log("Parsing table of contents...");
 
-	const dom = new JSDOM("<!DOCTYPE html><body>" + tocHTML + "</body>");
+	const dom = new JSDOM(
+		'<!DOCTYPE html><body><ol id="toc-root">' + tocHTML + "</ol></body>"
+	);
+	const document = dom.window.document;
 
-	console.log(tocHTML);
+	const tocRoot = document.getElementById("toc-root");
 
-	//return archivedItems;
+	if (tocRoot) {
+		return parseToc(tocRoot);
+	}
 }
 
 async function initPage(driver: WebDriver) {
@@ -114,3 +119,5 @@ async function initPage(driver: WebDriver) {
 
 	await driver.manage().setTimeouts({ implicit: 3000 });
 }
+
+function parseToc(root: HTMLElement) {}
