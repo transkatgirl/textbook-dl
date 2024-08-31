@@ -1,6 +1,7 @@
 import { Builder, Browser, By, WebDriver } from "selenium-webdriver";
 import { Options } from "selenium-webdriver/chrome";
 import { JSDOM } from "jsdom";
+import { RawNavItem } from "./builder";
 
 export async function download(address: URL) {
 	console.log("Starting WebDriver...");
@@ -74,14 +75,17 @@ export async function download(address: URL) {
 	console.log("Parsing table of contents...");
 
 	const dom = new JSDOM(
-		'<!DOCTYPE html><body><ol id="toc-root">' + tocHTML + "</ol></body>"
+		'<!DOCTYPE html><body><ol id="toc-root">' + tocHTML + "</ol></body>",
+		{
+			url: address.href,
+		}
 	);
 	const document = dom.window.document;
 
 	const tocRoot = document.getElementById("toc-root");
 
 	if (tocRoot) {
-		return parseToc(tocRoot);
+		console.log(parseToc(tocRoot));
 	}
 }
 
@@ -120,4 +124,83 @@ async function initPage(driver: WebDriver) {
 	await driver.manage().setTimeouts({ implicit: 3000 });
 }
 
-function parseToc(root: HTMLElement) {}
+function parseToc(root: HTMLElement) {
+	const items: RawNavItem[] = [];
+
+	for (const element of root.children) {
+		if (element.tagName == "LI") {
+			const item = handleListingItem(element as HTMLLIElement);
+
+			if (item) {
+				items.push(item);
+			}
+		}
+	}
+
+	return items;
+}
+
+function handleListingItem(element: HTMLLIElement): RawNavItem | void {
+	if (element.getAttribute("data-type") == "page") {
+		for (const childElement of element.children) {
+			if (childElement.tagName == "A" && childElement.textContent) {
+				return {
+					label: childElement.textContent,
+					href: (childElement as HTMLAnchorElement).href,
+					subitems: [],
+				};
+			}
+		}
+	}
+	if (element.getAttribute("data-type") == "chapter") {
+		for (const childElement of element.children) {
+			if (childElement.tagName == "DETAILS") {
+				return handleListingDropdown(childElement as HTMLDetailsElement);
+			}
+		}
+	}
+	if (element.getAttribute("data-type") == "eoc-dropdown") {
+		for (const childElement of element.children) {
+			if (childElement.tagName == "DETAILS") {
+				return handleListingDropdown(childElement as HTMLDetailsElement);
+			}
+		}
+	}
+}
+
+function handleListingDropdown(element: HTMLDetailsElement): RawNavItem | void {
+	let label = "";
+	const subitems: RawNavItem[] = [];
+
+	for (const childElement of element.children) {
+		if (childElement.tagName == "SUMMARY") {
+			const element = childElement;
+
+			for (const childElement of element.getElementsByTagName("span")) {
+				if (childElement.textContent && childElement.children.length == 0) {
+					label += childElement.textContent;
+				}
+			}
+		}
+		if (childElement.tagName == "OL") {
+			const element = childElement;
+
+			for (const childElement of element.children) {
+				if (childElement.tagName == "LI") {
+					const item = handleListingItem(childElement as HTMLLIElement);
+
+					if (item) {
+						subitems.push(item);
+					}
+				}
+			}
+		}
+	}
+
+	if (label.length > 0 && subitems.length > 0) {
+		return {
+			label,
+			subitems,
+		};
+	}
+}
