@@ -1,7 +1,7 @@
 import { Builder, Browser, By, WebDriver } from "selenium-webdriver";
 import { Options } from "selenium-webdriver/chrome";
 import { JSDOM } from "jsdom";
-import { RawNavItem } from "./builder";
+import { RawNavItem, RawTextbookMetadata } from "./builder";
 
 export async function download(address: URL) {
 	console.log("Starting WebDriver...");
@@ -146,7 +146,7 @@ function handleListingItem(element: HTMLLIElement): RawNavItem | void {
 			if (childElement.tagName == "A" && childElement.textContent) {
 				return {
 					label: childElement.textContent,
-					href: (childElement as HTMLAnchorElement).href,
+					url: new URL((childElement as HTMLAnchorElement).href),
 					subitems: [],
 				};
 			}
@@ -203,4 +203,70 @@ function handleListingDropdown(element: HTMLDetailsElement): RawNavItem | void {
 			subitems,
 		};
 	}
+}
+
+async function downloadTocPages(
+	meta: RawTextbookMetadata,
+	nav: RawNavItem[]
+): Map<string, string> | void {
+	console.log("Starting WebDriver...");
+
+	const options = new Options();
+	options.addArguments("--window-size=1600,1200");
+	const driver = await new Builder()
+		.forBrowser(Browser.CHROME)
+		.setChromeOptions(options)
+		.build();
+
+	const downloaded = await downloadPages(driver, meta, nav);
+
+	await driver.quit();
+
+	return new Map(downloaded);
+}
+
+async function downloadPages(
+	driver: WebDriver,
+	meta: RawTextbookMetadata,
+	items: RawNavItem[]
+): Promise<[string, string][]> {
+	const downloaded: [string, string][] = [];
+
+	for (const item of items) {
+		if (item.url) {
+			const download = await downloadPage(driver, item.url);
+
+			if (download) {
+				downloaded.push([item.url.href, download]);
+			}
+		}
+		if (item.subitems) {
+			const subitemDownload = await downloadPages(driver, meta, item.subitems);
+
+			for (const download of subitemDownload) {
+				downloaded.push(download);
+			}
+		}
+	}
+
+	return downloaded;
+}
+
+async function downloadPage(
+	driver: WebDriver,
+	address: URL
+): Promise<string | void> {
+	console.log("\nLoading URL " + address.href);
+	await driver.get(address.href);
+
+	await initPage(driver);
+
+	console.log("Attempting to get page content...");
+	const main = await driver.findElement(By.id("main-content"));
+
+	const content = await main.getAttribute("innerHTML");
+
+	console.log("Archived " + address.href);
+
+	return content;
 }

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { download as downloadOpenstax } from "./openstax";
 import { download as downloadLibretexts } from "./libretexts";
-import { RawTextbookIndex } from "./builder";
+import { RawTextbook } from "./builder";
 
 if (process.argv.length === 2) {
 	console.error("Expected at least one argument!");
@@ -19,7 +19,7 @@ try {
 
 address.protocol = "https";
 
-let downloadPromise: Promise<RawTextbookIndex | void>;
+let downloadPromise: Promise<RawTextbook | void>;
 
 switch (address.host) {
 	case "openstax.org":
