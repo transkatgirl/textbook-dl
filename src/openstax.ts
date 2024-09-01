@@ -265,15 +265,20 @@ async function downloadPage(
 			image.setAttribute("src", lazy_src);
 		}
 
-		if (image.src.startsWith("/")) {
-			const src = new URL("https://openstax.org/");
-			src.pathname = image.src;
-
-			image.src = src.href;
+		if (image.src.length > 0) {
+			image.setAttribute("src", image.src);
 		}
 	}
 
-	// TODO: Simplify MathML (remove MathJax renderings)
+	const equations = document.getElementsByClassName("os-math-in-para");
+
+	for (const equation of equations) {
+		const math = equation.getElementsByTagName("math");
+
+		if (math.length > 0) {
+			equation.innerHTML = math[0].innerHTML;
+		}
+	}
 
 	console.log("Archived " + address.href);
 
