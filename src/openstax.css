@@ -1,4 +1,4 @@
-/* Copied from https://openstax.org/rex/releases/v4/bdd6a22/static/css/main.7cf7796a.chunk.css on Sept 1 2024
+/* Copied from https://openstax.org/rex/releases/v4/bdd6a22/static/css/main.7cf7796a.chunk.css on Sept 1 2024, slightly modified afterwards
 */
 
 body {
@@ -4834,10 +4834,8 @@ body {
 #root,
 body,
 html {
-	margin: 0;
+	margin: 1em;
 	padding: 0;
-	position: relative;
-	overflow: visible;
 }
 
 html {
@@ -4850,17 +4848,6 @@ html {
 
 noscript {
 	display: none;
-}
-
-@media screen {
-	#root,
-	body,
-	html {
-		min-height: 100%;
-		display: flex;
-		flex: 1 1;
-		flex-direction: column;
-	}
 }
 
 #root {
