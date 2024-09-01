@@ -47,32 +47,6 @@ export async function download(address: URL) {
 
 	const tocHTML = await toc.getAttribute("innerHTML");
 
-	await driver.quit();
-
-	/*console.log("Attempting to get page list...");
-	const tocItems = await toc.findElements(By.css('li[data-type="page"] > a'));
-
-	const pages = new Map();
-
-	for (const item of tocItems) {
-		if (await item.isDisplayed()) {
-			const contentURL = await item.getAttribute("href");
-
-			await item.click();
-
-			await initPage(driver);
-
-			console.log("Attempting to get page content...");
-			const main = await driver.findElement(By.id("main-content"));
-
-			const contentHTML = await main.getAttribute("innerHTML");
-
-			console.log("Archived " + contentURL);
-
-			pages.set(contentURL, contentHTML);
-		}
-	}*/
-
 	console.log("Parsing table of contents...");
 
 	const dom = new JSDOM(
@@ -97,7 +71,11 @@ export async function download(address: URL) {
 		url: new URL(bookAddress),
 	};
 
-	const pages = await downloadTocPages(meta, nav);
+	const pages = await downloadPages(driver, meta, nav).then(
+		(pages) => new Map(pages)
+	);
+
+	await driver.quit();
 
 	if (pages) {
 		return {
@@ -222,26 +200,6 @@ function handleListingDropdown(element: HTMLDetailsElement): RawNavItem | void {
 			subitems,
 		};
 	}
-}
-
-async function downloadTocPages(
-	meta: RawTextbookMetadata,
-	nav: RawNavItem[]
-): Promise<Map<string, string> | void> {
-	console.log("Starting WebDriver...");
-
-	const options = new Options();
-	options.addArguments("--window-size=1600,1200");
-	const driver = await new Builder()
-		.forBrowser(Browser.CHROME)
-		.setChromeOptions(options)
-		.build();
-
-	const downloaded = await downloadPages(driver, meta, nav);
-
-	await driver.quit();
-
-	return new Map(downloaded);
 }
 
 async function downloadPages(
