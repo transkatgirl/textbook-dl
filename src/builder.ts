@@ -2,6 +2,7 @@ export interface RawTextbook {
 	meta: RawTextbookMetadata;
 	nav: RawNavItem[];
 	pages: Map<string, string>;
+	stylesheet?: string;
 }
 
 export interface RawTextbookMetadata {
