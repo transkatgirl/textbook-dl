@@ -149,14 +149,11 @@ function handleListingItem(element: HTMLLIElement): RawNavItem | void {
 			}
 		}
 	}
-	if (element.getAttribute("data-type") == "chapter") {
-		for (const childElement of element.children) {
-			if (childElement.tagName == "DETAILS") {
-				return handleListingDropdown(childElement as HTMLDetailsElement);
-			}
-		}
-	}
-	if (element.getAttribute("data-type") == "eoc-dropdown") {
+	if (
+		element.getAttribute("data-type") == "chapter" ||
+		element.getAttribute("data-type") == "eoc-dropdown" ||
+		element.getAttribute("data-type") == "eob-dropdown"
+	) {
 		for (const childElement of element.children) {
 			if (childElement.tagName == "DETAILS") {
 				return handleListingDropdown(childElement as HTMLDetailsElement);
