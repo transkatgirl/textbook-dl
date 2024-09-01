@@ -13,6 +13,7 @@ export interface RawTextbookMetadata {
 export interface RawNavItem {
 	label: string;
 	url?: URL;
+	filename?: string;
 	subitems: RawNavItem[];
 }
 

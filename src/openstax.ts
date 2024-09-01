@@ -202,11 +202,13 @@ function handleListingDropdown(element: HTMLDetailsElement): RawNavItem | void {
 async function downloadPages(
 	driver: WebDriver,
 	meta: RawTextbookMetadata,
-	items: RawNavItem[]
+	nav: RawNavItem[]
 ): Promise<[string, string][]> {
 	const downloaded: [string, string][] = [];
 
-	for (const item of items) {
+	for (let i = 0; i < nav.length; i++) {
+		const item = nav[i];
+
 		if (item.url) {
 			const filename = path.basename(item.url.pathname);
 
@@ -215,6 +217,7 @@ async function downloadPages(
 			if (download) {
 				downloaded.push([filename, download]);
 			}
+			nav[i].filename = filename;
 		}
 		if (item.subitems.length > 0) {
 			const subitemDownload = await downloadPages(driver, meta, item.subitems);
