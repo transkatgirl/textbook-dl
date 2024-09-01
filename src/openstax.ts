@@ -270,13 +270,20 @@ async function downloadPage(
 		}
 	}
 
-	const equations = document.querySelectorAll(".os-math-in-para");
+	for (const element of document.querySelectorAll(
+		".MathJax_Preview, .MathJax_Display, .MathJax"
+	)) {
+		element.remove();
+	}
 
-	for (const equation of equations) {
-		const math = equation.querySelector('script[type="math/mml"]');
+	for (const element of document.querySelectorAll('script[type="math/mml"]')) {
+		const container = document.createElement("div");
+		container.innerHTML = element.innerHTML;
+
+		const math = container.querySelector("math");
 
 		if (math) {
-			equation.innerHTML = math.innerHTML;
+			element.replaceWith(math);
 		}
 	}
 
