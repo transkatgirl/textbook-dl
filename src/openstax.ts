@@ -247,5 +247,9 @@ async function downloadPage(
 
 	console.log("Archived " + address.href);
 
-	return content;
+	// TODO: Make image links absolute, fix <img> src attribute, simplify MathML (remove MathJax renderings)
+
+	return (
+		'<!DOCTYPE html><body><div id="main-content">' + content + "</div></body>"
+	);
 }
