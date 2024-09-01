@@ -245,11 +245,37 @@ async function downloadPage(
 
 	const content = await main.getAttribute("innerHTML");
 
+	console.log("Parsing content...");
+
+	const dom = new JSDOM(
+		'<!DOCTYPE html><body><div id="main-content">' + content + "</div></body>",
+		{
+			url: address.href,
+		}
+	);
+	const document = dom.window.document;
+
+	const images = document.getElementsByTagName("img");
+
+	for (const image of images) {
+		const lazy_src = image.getAttribute("data-lazy-src");
+
+		if (lazy_src) {
+			image.removeAttribute("data-lazy-src");
+			image.setAttribute("src", lazy_src);
+		}
+
+		if (image.src.startsWith("/")) {
+			const src = new URL("https://openstax.org/");
+			src.pathname = image.src;
+
+			image.src = src.href;
+		}
+	}
+
+	// TODO: Simplify MathML (remove MathJax renderings)
+
 	console.log("Archived " + address.href);
 
-	// TODO: Make image links absolute, fix <img> src attribute, simplify MathML (remove MathJax renderings)
-
-	return (
-		'<!DOCTYPE html><body><div id="main-content">' + content + "</div></body>"
-	);
+	return document.body.innerHTML;
 }
