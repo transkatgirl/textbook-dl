@@ -2,6 +2,7 @@ import { Builder, Browser, By, WebDriver } from "selenium-webdriver";
 import { Options } from "selenium-webdriver/chrome";
 import { JSDOM } from "jsdom";
 import { RawNavItem, RawTextbookMetadata } from "./builder";
+import path from "path";
 
 export async function download(address: URL) {
 	console.log("Starting WebDriver...");
@@ -84,8 +85,26 @@ export async function download(address: URL) {
 
 	const tocRoot = document.getElementById("toc-root");
 
-	if (tocRoot) {
-		console.log(parseToc(tocRoot));
+	if (!tocRoot) {
+		return;
+	}
+
+	const nav = parseToc(tocRoot);
+
+	const meta: RawTextbookMetadata = {
+		title: bookTitle,
+		author: "OpenStax",
+		url: new URL(bookAddress),
+	};
+
+	const pages = await downloadTocPages(meta, nav);
+
+	if (pages) {
+		return {
+			meta,
+			nav,
+			pages,
+		};
 	}
 }
 
@@ -234,10 +253,12 @@ async function downloadPages(
 
 	for (const item of items) {
 		if (item.url) {
+			const filename = path.basename(item.url.pathname);
+
 			const download = await downloadPage(driver, item.url);
 
 			if (download) {
-				downloaded.push([item.url.href, download]);
+				downloaded.push([filename, download]);
 			}
 		}
 		if (item.subitems) {
