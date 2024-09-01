@@ -208,7 +208,7 @@ function handleListingDropdown(element: HTMLDetailsElement): RawNavItem | void {
 async function downloadTocPages(
 	meta: RawTextbookMetadata,
 	nav: RawNavItem[]
-): Map<string, string> | void {
+): Promise<Map<string, string> | void> {
 	console.log("Starting WebDriver...");
 
 	const options = new Options();
