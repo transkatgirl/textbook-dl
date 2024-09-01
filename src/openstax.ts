@@ -270,13 +270,13 @@ async function downloadPage(
 		}
 	}
 
-	const equations = document.getElementsByClassName("os-math-in-para");
+	const equations = document.querySelectorAll(".os-math-in-para");
 
 	for (const equation of equations) {
-		const math = equation.getElementsByTagName("math");
+		const math = equation.querySelector('script[type="math/mml"]');
 
-		if (math.length > 0) {
-			equation.innerHTML = math[0].innerHTML;
+		if (math) {
+			equation.innerHTML = math.innerHTML;
 		}
 	}
 
