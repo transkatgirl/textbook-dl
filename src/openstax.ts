@@ -216,7 +216,7 @@ async function downloadPages(
 				downloaded.push([filename, download]);
 			}
 		}
-		if (item.subitems) {
+		if (item.subitems.length > 0) {
 			const subitemDownload = await downloadPages(driver, meta, item.subitems);
 
 			for (const download of subitemDownload) {
