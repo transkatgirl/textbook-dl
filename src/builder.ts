@@ -1,7 +1,7 @@
 import { cp, mkdir, writeFile } from "fs/promises";
 import { JSDOM } from "jsdom";
 import path from "path";
-import { v7 as uuidv7 } from "uuid";
+import { v4 as uuidv4, v7 as uuidv7 } from "uuid";
 
 export interface RawTextbook {
 	meta: RawTextbookMetadata;
@@ -38,7 +38,6 @@ export async function buildTextbook(input: RawTextbook) {
 		path.join(root, "nav.xhtml"),
 		buildNav(input.meta.lang, input.nav)
 	);
-	await writeFile(path.join(root, "content.opf"), buildPackage(input));
 
 	const reservedRoot = path.join(root, "META-INF");
 	await mkdir(reservedRoot);
@@ -50,6 +49,8 @@ export async function buildTextbook(input: RawTextbook) {
 
 	const mediaRoot = path.join(root, "media");
 	await mkdir(mediaRoot);
+
+	const mediaItems = new Set();
 
 	for (const [filename, contents] of input.pages.entries()) {
 		console.log("\nParsing " + filename + "...");
@@ -79,6 +80,7 @@ export async function buildTextbook(input: RawTextbook) {
 
 				await writeFile(output, new DataView(body));
 				image.src = "media/" + filename;
+				mediaItems.add("media/" + filename);
 			} else {
 				throw "Received status code " + response.status;
 			}
@@ -91,9 +93,14 @@ export async function buildTextbook(input: RawTextbook) {
 		const serialized = new XMLSerializer().serializeToString(document);
 		await writeFile(path.join(root, filename), serialized);
 	}
+
+	await writeFile(
+		path.join(root, "content.opf"),
+		buildPackage(input, mediaItems)
+	);
 }
 
-function buildPackage(input: RawTextbook): string {
+function buildPackage(input: RawTextbook, resourceFiles: Set<string>): string {
 	const dom = new JSDOM(
 		'<?xml version="1.0" encoding="utf-8"?><package version="3.0" unique-identifier="BookId" xmlns="http://www.idpf.org/2007/opf"><metadata xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:opf="http://www.idpf.org/2007/opf"></metadata><manifest></manifest><spine></spine></package>',
 		{ contentType: "text/xml" }
@@ -132,7 +139,39 @@ function buildPackage(input: RawTextbook): string {
 	date.innerText = new Date().toISOString();
 	metadata.appendChild(date);
 
+	const manifest = document.getElementsByTagName("manifest")[0];
 	const spine = document.getElementsByTagName("spine")[0];
+
+	if (input.stylesheet) {
+		const element = document.createElement("item");
+		element.setAttribute("id", "stylesheet");
+		element.setAttribute("href", "styles.css");
+		element.setAttribute("media-type", "text/css");
+
+		manifest.appendChild(element);
+	}
+
+	for (const page of input.pages.keys()) {
+		const identifier = uuidv4();
+
+		const manifestElement = document.createElement("item");
+		manifestElement.setAttribute("id", identifier);
+		manifestElement.setAttribute("href", page);
+		manifestElement.setAttribute("media-type", "application/xhtml+xml");
+		manifest.append(manifestElement);
+
+		const spineElement = document.createElement("itemref");
+		spineElement.setAttribute("idref", identifier);
+		spine.appendChild(spineElement);
+	}
+
+	for (const resource of resourceFiles.keys()) {
+		const manifestElement = document.createElement("item");
+		manifestElement.setAttribute("id", uuidv4());
+		manifestElement.setAttribute("href", resource);
+		//manifestElement.setAttribute("media-type", "application/xhtml+xml");
+		manifest.append(manifestElement);
+	}
 
 	// TODO
 
