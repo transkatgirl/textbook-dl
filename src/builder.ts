@@ -173,7 +173,7 @@ function buildPackage(
 
 	const date = document.createElementNS("http://www.idpf.org/2007/opf", "meta");
 	date.setAttribute("property", "dcterms:modified");
-	date.textContent = new Date().toISOString();
+	date.textContent = new Date().toISOString().slice(0, -5) + "Z";
 	metadata.appendChild(date);
 
 	const manifest = document.getElementsByTagName("manifest")[0];
@@ -198,7 +198,7 @@ function buildPackage(
 			"http://www.idpf.org/2007/opf",
 			"item"
 		);
-		manifestElement.setAttribute("id", identifier);
+		manifestElement.setAttribute("id", "p" + identifier);
 		manifestElement.setAttribute("href", page);
 		manifestElement.setAttribute("media-type", "application/xhtml+xml");
 		manifest.append(manifestElement);
@@ -207,7 +207,7 @@ function buildPackage(
 			"http://www.idpf.org/2007/opf",
 			"itemref"
 		);
-		spineElement.setAttribute("idref", identifier);
+		spineElement.setAttribute("idref", "p" + identifier);
 		spine.appendChild(spineElement);
 	}
 
