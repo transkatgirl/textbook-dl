@@ -8,4 +8,15 @@ Please just offer your books in EPUB format. I shouldn't have to do this.
 
 ## Usage
 
-TODO
+Note: You must have Google Chrome installed to run this tool.
+
+```bash
+npm install
+npm run start [book url]
+```
+
+### Supported Sites
+
+- OpenStax
+
+support for LibreTexts coming soon
