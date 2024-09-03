@@ -1,7 +1,7 @@
 import { cp, mkdir, writeFile } from "fs/promises";
 import { JSDOM } from "jsdom";
 import path from "path";
-import { URL } from "url";
+import url, { URL } from "url";
 import { v7 as uuidv7 } from "uuid";
 
 export interface RawTextbook {
@@ -84,9 +84,9 @@ export async function buildTextbook(input: RawTextbook) {
 		}
 
 		for (const anchor of document.getElementsByTagName("a")) {
-			const href = URL.parse(anchor.href);
+			const href = url.parse(anchor.href);
 
-			if (!href || href.host.length > 0 || href.protocol.length > 0) {
+			if (!href || href.host || href.protocol || !href.pathname) {
 				continue;
 			}
 
