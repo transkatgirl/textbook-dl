@@ -4,6 +4,8 @@ import { JSDOM } from "jsdom";
 import { RawNavItem, RawTextbookMetadata } from "./builder";
 import path from "path";
 
+// Note: OpenStax CSS is from https://openstax.org/rex/releases/v4/bdd6a22/static/css/main.7cf7796a.chunk.css (last retrieved on Sept 1 2024), then modified to remove custom fonts and add a 1em margin around the body element.
+
 export async function download(address: URL) {
 	console.log("Starting WebDriver...");
 
