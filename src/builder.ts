@@ -134,9 +134,13 @@ function buildPackage(
 		metadata.appendChild(element);
 	}
 
+	const source = document.createElement("dc:source");
+	source.innerText = input.meta.url.href;
+	metadata.appendChild(source);
+
 	const description = document.createElement("dc:description");
 	description.innerText =
-		"Downloaded from " + input.meta.url + " using textbook-dl";
+		"Downloaded from " + input.meta.url.href + " using textbook-dl";
 	metadata.appendChild(description);
 
 	const language = document.createElement("dc:language");
