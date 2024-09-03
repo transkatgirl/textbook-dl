@@ -77,11 +77,14 @@ export async function download(address: URL) {
 
 	await driver.quit();
 
+	const stylesheet = path.resolve(__dirname, "../src/openstax.css");
+
 	if (pages) {
 		return {
 			meta,
 			nav,
 			pages,
+			stylesheet,
 		};
 	}
 }

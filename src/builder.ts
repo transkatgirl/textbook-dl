@@ -1,4 +1,4 @@
-import { DOMParser, MIME_TYPE, XMLSerializer } from "@xmldom/xmldom";
+import { JSDOM } from "jsdom";
 
 export interface RawTextbook {
 	meta: RawTextbookMetadata;
@@ -22,10 +22,15 @@ export interface RawNavItem {
 
 export function buildTextbook(input: RawTextbook) {
 	for (const [filename, contents] of input.pages.entries()) {
-		const document = new DOMParser().parseFromString(
+		/*const document = new DOMParser().parseFromString(
 			"<!DOCTYPE html><body>" + contents + "</body>",
 			MIME_TYPE.HTML
-		);
+		);*/
+
+		const dom = new JSDOM("<!DOCTYPE html><body>" + contents + "</body>");
+		const document = dom.window.document;
+
+		const XMLSerializer = dom.window.XMLSerializer;
 
 		const serialized = new XMLSerializer().serializeToString(document);
 	}
