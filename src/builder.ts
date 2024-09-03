@@ -235,13 +235,13 @@ function buildPackage(
 
 	let counter = 0;
 
-	for (const page of input.pages.keys()) {
+	for (const filename of input.pages.keys()) {
 		const manifestElement = document.createElementNS(
 			"http://www.idpf.org/2007/opf",
 			"item"
 		);
 		manifestElement.setAttribute("id", "s" + counter.toString());
-		manifestElement.setAttribute("href", page);
+		manifestElement.setAttribute("href", transformFilename(filename));
 		manifestElement.setAttribute("media-type", "application/xhtml+xml");
 		manifest.append(manifestElement);
 
