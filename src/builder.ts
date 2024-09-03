@@ -113,7 +113,7 @@ function buildPackage(
 	console.log("Building EPUB package document...");
 
 	const dom = new JSDOM(
-		'<?xml version="1.0" encoding="utf-8"?><package version="3.0" unique-identifier="BookId" xmlns="http://www.idpf.org/2007/opf"><metadata xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:opf="http://www.idpf.org/2007/opf"></metadata><item id="nav" href="nav.xhtml" media-type="application/xhtml+xml" properties="nav"/><manifest></manifest><spine><itemref idref="nav" linear="no"/></spine></package>',
+		'<?xml version="1.0" encoding="utf-8"?><package version="3.0" unique-identifier="BookId" xmlns="http://www.idpf.org/2007/opf"><metadata xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:opf="http://www.idpf.org/2007/opf"></metadata><manifest><item id="nav" href="nav.xhtml" media-type="application/xhtml+xml" properties="nav"/></manifest><spine><itemref idref="nav" linear="no"/></spine></package>',
 		{ contentType: "text/xml" }
 	);
 	const document = dom.window.document;
@@ -123,42 +123,60 @@ function buildPackage(
 
 	const identifier = document.createElement("dc:identifier");
 	identifier.id = "BookId";
-	identifier.innerText = "urn:uuid:" + uuidv7();
+	identifier.textContent = "urn:uuid:" + uuidv7();
 	metadata.appendChild(identifier);
 
-	const title = document.createElement("dc:title");
-	title.innerText = input.meta.title;
+	const title = document.createElementNS(
+		"http://purl.org/dc/elements/1.1/",
+		"dc:title"
+	);
+	title.textContent = input.meta.title;
 	metadata.appendChild(title);
 
 	for (const creator of input.meta.creators) {
-		const element = document.createElement("dc:creator");
-		element.innerText = creator;
+		const element = document.createElementNS(
+			"http://purl.org/dc/elements/1.1/",
+			"dc:creator"
+		);
+		element.innerHTML = creator;
 		metadata.appendChild(element);
 	}
 
-	const source = document.createElement("dc:source");
-	source.innerText = input.meta.url.href;
+	const source = document.createElementNS(
+		"http://purl.org/dc/elements/1.1/",
+		"dc:source"
+	);
+	source.textContent = input.meta.url.href;
 	metadata.appendChild(source);
 
-	const description = document.createElement("dc:description");
-	description.innerText =
+	const description = document.createElementNS(
+		"http://purl.org/dc/elements/1.1/",
+		"dc:description"
+	);
+	description.innerHTML =
 		"Downloaded from " + input.meta.url.href + " using textbook-dl";
 	metadata.appendChild(description);
 
-	const language = document.createElement("dc:language");
-	language.innerText = input.meta.lang;
+	const language = document.createElementNS(
+		"http://purl.org/dc/elements/1.1/",
+		"dc:language"
+	);
+	language.textContent = input.meta.lang;
 	metadata.appendChild(language);
 
-	const date = document.createElement("meta");
+	const date = document.createElementNS("http://www.idpf.org/2007/opf", "meta");
 	date.setAttribute("property", "dcterms:modified");
-	date.innerText = new Date().toISOString();
+	date.textContent = new Date().toISOString();
 	metadata.appendChild(date);
 
 	const manifest = document.getElementsByTagName("manifest")[0];
 	const spine = document.getElementsByTagName("spine")[0];
 
 	if (input.stylesheet) {
-		const element = document.createElement("item");
+		const element = document.createElementNS(
+			"http://www.idpf.org/2007/opf",
+			"item"
+		);
 		element.setAttribute("id", "stylesheet");
 		element.setAttribute("href", "styles.css");
 		element.setAttribute("media-type", "text/css");
@@ -169,19 +187,28 @@ function buildPackage(
 	for (const page of input.pages.keys()) {
 		const identifier = uuidv4();
 
-		const manifestElement = document.createElement("item");
+		const manifestElement = document.createElementNS(
+			"http://www.idpf.org/2007/opf",
+			"item"
+		);
 		manifestElement.setAttribute("id", identifier);
 		manifestElement.setAttribute("href", page);
 		manifestElement.setAttribute("media-type", "application/xhtml+xml");
 		manifest.append(manifestElement);
 
-		const spineElement = document.createElement("itemref");
+		const spineElement = document.createElementNS(
+			"http://www.idpf.org/2007/opf",
+			"itemref"
+		);
 		spineElement.setAttribute("idref", identifier);
 		spine.appendChild(spineElement);
 	}
 
 	for (const [resource, type] of resourceFiles.entries()) {
-		const manifestElement = document.createElement("item");
+		const manifestElement = document.createElementNS(
+			"http://www.idpf.org/2007/opf",
+			"item"
+		);
 		manifestElement.setAttribute("id", uuidv4());
 		manifestElement.setAttribute("href", resource);
 		manifestElement.setAttribute("media-type", type);
@@ -220,11 +247,11 @@ function buildNavList(document: Document, nav: RawNavItem[]): HTMLOListElement {
 		if (item.filename) {
 			const anchor = document.createElement("a");
 			anchor.href = item.filename;
-			anchor.innerText = item.label;
+			anchor.textContent = item.label;
 			listItem.appendChild(anchor);
 		} else {
 			const span = document.createElement("span");
-			span.innerText = item.label;
+			span.textContent = item.label;
 			listItem.appendChild(span);
 		}
 
