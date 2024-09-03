@@ -1,7 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { download as downloadOpenstax } from "./openstax";
 import { download as downloadLibretexts } from "./libretexts";
-import { RawTextbook } from "./builder";
+import { buildTextbook, RawTextbook } from "./builder";
 
 if (process.argv.length === 2) {
 	console.error("Expected at least one argument!");
@@ -74,3 +73,9 @@ switch (address.host) {
 		console.log("The requested website is not supported by this script!");
 		process.exit(1);
 }
+
+downloadPromise.then((textbook) => {
+	if (textbook) {
+		buildTextbook(textbook);
+	}
+});
