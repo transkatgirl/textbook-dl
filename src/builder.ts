@@ -50,7 +50,7 @@ export async function buildTextbook(input: RawTextbook) {
 	const mediaRoot = path.join(root, "media");
 	await mkdir(mediaRoot);
 
-	const mediaItems = new Set();
+	const mediaItems = new Map();
 
 	for (const [filename, contents] of input.pages.entries()) {
 		console.log("\nParsing " + filename + "...");
@@ -76,11 +76,17 @@ export async function buildTextbook(input: RawTextbook) {
 
 			const response = await fetch(src);
 			if (response.ok) {
+				const mime = response.headers.get("Content-Type");
+
+				if (!mime) {
+					throw "Unable to find content-type";
+				}
+
 				const body = await response.arrayBuffer();
 
 				await writeFile(output, new DataView(body));
 				image.src = "media/" + filename;
-				mediaItems.add("media/" + filename);
+				mediaItems.set("media/" + filename, mime);
 			} else {
 				throw "Received status code " + response.status;
 			}
@@ -100,7 +106,10 @@ export async function buildTextbook(input: RawTextbook) {
 	);
 }
 
-function buildPackage(input: RawTextbook, resourceFiles: Set<string>): string {
+function buildPackage(
+	input: RawTextbook,
+	resourceFiles: Map<string, string>
+): string {
 	const dom = new JSDOM(
 		'<?xml version="1.0" encoding="utf-8"?><package version="3.0" unique-identifier="BookId" xmlns="http://www.idpf.org/2007/opf"><metadata xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:opf="http://www.idpf.org/2007/opf"></metadata><manifest></manifest><spine></spine></package>',
 		{ contentType: "text/xml" }
@@ -165,15 +174,13 @@ function buildPackage(input: RawTextbook, resourceFiles: Set<string>): string {
 		spine.appendChild(spineElement);
 	}
 
-	for (const resource of resourceFiles.keys()) {
+	for (const [resource, type] of resourceFiles.entries()) {
 		const manifestElement = document.createElement("item");
 		manifestElement.setAttribute("id", uuidv4());
 		manifestElement.setAttribute("href", resource);
-		//manifestElement.setAttribute("media-type", "application/xhtml+xml");
+		manifestElement.setAttribute("media-type", type);
 		manifest.append(manifestElement);
 	}
-
-	// TODO
 
 	return new XMLSerializer().serializeToString(document);
 }
