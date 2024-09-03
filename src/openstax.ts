@@ -276,6 +276,14 @@ async function downloadPage(
 		}
 	}
 
+	const anchors = document.getElementsByTagName("a");
+
+	for (const anchor of anchors) {
+		if (anchor.getAttribute("href")?.startsWith("../../")) {
+			anchor.setAttribute("href", anchor.href);
+		}
+	}
+
 	for (const element of document.querySelectorAll(
 		".MathJax_Preview, .MathJax_Display, .MathJax"
 	)) {
