@@ -56,7 +56,7 @@ export async function buildTextbook(input: RawTextbook) {
 		console.log("\nParsing " + filename + "...");
 
 		const dom = new JSDOM(
-			'<!DOCTYPE html><head><meta charset="utf-8"/></head><body>' +
+			'<!DOCTYPE html><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/></head><body>' +
 				contents +
 				"</body>"
 		);
