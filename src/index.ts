@@ -74,8 +74,13 @@ switch (address.host) {
 		process.exit(1);
 }
 
-downloadPromise.then((textbook) => {
-	if (textbook) {
-		buildTextbook(textbook);
-	}
-});
+downloadPromise
+	.then((textbook) => {
+		if (textbook) {
+			buildTextbook(textbook);
+		}
+	})
+	.catch((error) => {
+		console.log("Build Error: " + error);
+		process.exit(1);
+	});
