@@ -1,6 +1,7 @@
 import { cp, mkdir, writeFile } from "fs/promises";
 import { JSDOM } from "jsdom";
 import path from "path";
+import { URL } from "url";
 import { v7 as uuidv7 } from "uuid";
 
 export interface RawTextbook {
@@ -30,15 +31,6 @@ export async function buildTextbook(input: RawTextbook) {
 	const root = path.join(process.cwd(), "output");
 	await mkdir(root);
 
-	if (input.stylesheet) {
-		await cp(input.stylesheet, path.join(root, "styles.css"));
-	}
-
-	await writeFile(
-		path.join(root, "nav.xhtml"),
-		buildNav(input.meta.lang, input.nav)
-	);
-
 	await writeFile(path.join(root, "mimetype"), "application/epub+zip");
 
 	const reservedRoot = path.join(root, "META-INF");
@@ -46,10 +38,28 @@ export async function buildTextbook(input: RawTextbook) {
 
 	await writeFile(
 		path.join(reservedRoot, "container.xml"),
-		'<?xml version="1.0" encoding="UTF-8"?><container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container"><rootfiles><rootfile full-path="content.opf" media-type="application/oebps-package+xml"/></rootfiles></container>'
+		'<?xml version="1.0" encoding="UTF-8"?><container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container"><rootfiles><rootfile full-path="contents/content.opf" media-type="application/oebps-package+xml"/></rootfiles></container>'
 	);
 
-	const mediaRoot = path.join(root, "media");
+	const contentRoot = path.join(root, "contents");
+	await mkdir(contentRoot);
+
+	if (input.stylesheet) {
+		await cp(input.stylesheet, path.join(contentRoot, "styles.css"));
+	}
+
+	await writeFile(
+		path.join(contentRoot, "nav.xhtml"),
+		buildNav(input.meta.lang, input.nav)
+	);
+
+	const filenameMappings = new Map();
+
+	for (const filename of input.pages.keys()) {
+		filenameMappings.set(filename, transformFilename(filename));
+	}
+
+	const mediaRoot = path.join(contentRoot, "media");
 	await mkdir(mediaRoot);
 
 	const mediaItems = new Map();
@@ -73,8 +83,35 @@ export async function buildTextbook(input: RawTextbook) {
 			document.head.appendChild(link);
 		}
 
+		for (const anchor of document.getElementsByTagName("a")) {
+			const href = URL.parse(anchor.href);
+
+			if (!href || href.host.length > 0 || href.protocol.length > 0) {
+				continue;
+			}
+
+			let path = href.pathname;
+
+			if (path.startsWith("/")) {
+				path = path.substring(1);
+			}
+
+			if (path.startsWith("./")) {
+				path = path.substring(2);
+			}
+
+			if (filenameMappings.has(path)) {
+				href.pathname = filenameMappings.get(path);
+				anchor.href = href.href;
+			}
+		}
+
 		for (const image of document.getElementsByTagName("img")) {
-			const src = new URL(image.src);
+			const src = URL.parse(image.src);
+			if (!src) {
+				continue;
+			}
+
 			const filename = path.basename(src.pathname);
 			const output = path.join(mediaRoot, filename);
 
@@ -103,11 +140,14 @@ export async function buildTextbook(input: RawTextbook) {
 		console.log("Serializing page...");
 
 		const serialized = new XMLSerializer().serializeToString(document);
-		await writeFile(path.join(root, filename), serialized);
+		await writeFile(
+			path.join(contentRoot, transformFilename(filename)),
+			serialized
+		);
 	}
 
 	await writeFile(
-		path.join(root, "content.opf"),
+		path.join(contentRoot, "content.opf"),
 		buildPackage(input, mediaItems)
 	);
 }
@@ -259,7 +299,7 @@ function buildNavList(document: Document, nav: RawNavItem[]): HTMLOListElement {
 
 		if (item.filename) {
 			const anchor = document.createElement("a");
-			anchor.href = item.filename;
+			anchor.href = transformFilename(item.filename);
 			anchor.textContent = item.label;
 			listItem.appendChild(anchor);
 		} else {
@@ -276,4 +316,20 @@ function buildNavList(document: Document, nav: RawNavItem[]): HTMLOListElement {
 	}
 
 	return root;
+}
+
+function transformFilename(filename: string): string {
+	if (filename.toLowerCase().endsWith(".xhtml")) {
+		return filename;
+	}
+
+	if (filename.toLowerCase().endsWith(".html")) {
+		return filename.substring(0, filename.length - 5) + ".xhtml";
+	}
+
+	if (filename.toLowerCase().endsWith(".htm")) {
+		return filename.substring(0, filename.length - 4) + ".xhtml";
+	}
+
+	return filename + ".xhtml";
 }
