@@ -1,7 +1,7 @@
 import { cp, mkdir, writeFile } from "fs/promises";
 import { JSDOM } from "jsdom";
 import path from "path";
-import { v4 as uuidv4, v7 as uuidv7 } from "uuid";
+import { v7 as uuidv7 } from "uuid";
 
 export interface RawTextbook {
 	meta: RawTextbookMetadata;
@@ -119,7 +119,7 @@ function buildPackage(
 	console.log("Building EPUB package document...");
 
 	const dom = new JSDOM(
-		'<?xml version="1.0" encoding="utf-8"?><package version="3.0" unique-identifier="BookId" xmlns="http://www.idpf.org/2007/opf"><metadata xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:opf="http://www.idpf.org/2007/opf"></metadata><manifest><item id="nav" href="nav.xhtml" media-type="application/xhtml+xml" properties="nav"/></manifest><spine><itemref idref="nav" linear="no"/></spine></package>',
+		'<?xml version="1.0" encoding="utf-8"?><package version="3.0" unique-identifier="BookId" xmlns="http://www.idpf.org/2007/opf"><metadata xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:opf="http://www.idpf.org/2007/opf"></metadata><manifest><item id="nav" href="nav.xhtml" media-type="application/xhtml+xml" properties="nav"/></manifest><spine><itemref idref="nav"/></spine></package>',
 		{ contentType: "text/xml" }
 	);
 	const document = dom.window.document;
@@ -193,14 +193,14 @@ function buildPackage(
 		manifest.appendChild(element);
 	}
 
-	for (const page of input.pages.keys()) {
-		const identifier = uuidv4();
+	let counter = 0;
 
+	for (const page of input.pages.keys()) {
 		const manifestElement = document.createElementNS(
 			"http://www.idpf.org/2007/opf",
 			"item"
 		);
-		manifestElement.setAttribute("id", "p" + identifier);
+		manifestElement.setAttribute("id", "s" + counter.toString());
 		manifestElement.setAttribute("href", page);
 		manifestElement.setAttribute("media-type", "application/xhtml+xml");
 		manifest.append(manifestElement);
@@ -209,23 +209,25 @@ function buildPackage(
 			"http://www.idpf.org/2007/opf",
 			"itemref"
 		);
-		spineElement.setAttribute("idref", "p" + identifier);
+		spineElement.setAttribute("idref", "s" + counter.toString());
 		spine.appendChild(spineElement);
+
+		counter++;
 	}
 
-	let resourceCounter = 0;
+	counter = 0;
 
 	for (const [resource, type] of resourceFiles.entries()) {
 		const manifestElement = document.createElementNS(
 			"http://www.idpf.org/2007/opf",
 			"item"
 		);
-		manifestElement.setAttribute("id", "r" + resourceCounter.toString());
+		manifestElement.setAttribute("id", "r" + counter.toString());
 		manifestElement.setAttribute("href", resource);
 		manifestElement.setAttribute("media-type", type);
 		manifest.append(manifestElement);
 
-		resourceCounter++;
+		counter++;
 	}
 
 	return new XMLSerializer().serializeToString(document);
