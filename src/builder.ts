@@ -1,6 +1,7 @@
 import { cp, mkdir, writeFile } from "fs/promises";
 import { JSDOM } from "jsdom";
 import path from "path";
+import { v7 as uuidv7 } from "uuid";
 
 export interface RawTextbook {
 	meta: RawTextbookMetadata;
@@ -12,6 +13,7 @@ export interface RawTextbook {
 export interface RawTextbookMetadata {
 	title: string;
 	author: string;
+	lang: string;
 	url: URL;
 }
 
@@ -32,9 +34,20 @@ export async function buildTextbook(input: RawTextbook) {
 		cp(input.stylesheet, path.join(root, "styles.css"));
 	}
 
-	// TODO: Build EPUB
+	// TODO: remove these two lines
 	await writeFile(path.join(root, "meta.json"), JSON.stringify(input.meta));
 	await writeFile(path.join(root, "nav.json"), JSON.stringify(input.nav));
+
+	await writeFile(path.join(root, "nav.xhtml"), buildNav(input.nav));
+	await writeFile(path.join(root, "content.opf"), buildPackage(input));
+
+	const reservedRoot = path.join(root, "META-INF");
+	await mkdir(reservedRoot);
+
+	await writeFile(
+		path.join(reservedRoot, "container.xml"),
+		'<?xml version="1.0" encoding="UTF-8"?><container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container"><rootfiles><rootfile full-path="content.opf" media-type="application/oebps-package+xml"/></rootfiles></container>'
+	);
 
 	const mediaRoot = path.join(root, "media");
 	await mkdir(mediaRoot);
@@ -44,6 +57,7 @@ export async function buildTextbook(input: RawTextbook) {
 
 		const dom = new JSDOM("<!DOCTYPE html><body>" + contents + "</body>");
 		const document = dom.window.document;
+		const XMLSerializer = dom.window.XMLSerializer;
 
 		if (input.stylesheet) {
 			const link = document.createElement("link");
@@ -73,12 +87,30 @@ export async function buildTextbook(input: RawTextbook) {
 			await new Promise((resolve) => setTimeout(resolve, 500));
 		}
 
-		const XMLSerializer = dom.window.XMLSerializer;
-
 		console.log("Serializing page...");
 
 		const serialized = new XMLSerializer().serializeToString(document);
-
 		await writeFile(path.join(root, filename), serialized);
 	}
+}
+
+function buildPackage(input: RawTextbook): string {
+	const dom = new JSDOM(
+		'<?xml version="1.0" encoding="utf-8"?><package version="3.0" unique-identifier="BookId" xmlns="http://www.idpf.org/2007/opf"><metadata xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:opf="http://www.idpf.org/2007/opf"></metadata><manifest></manifest><spine></spine></package>',
+		{ contentType: "text/xml" }
+	);
+	const document = dom.window.document;
+	const XMLSerializer = dom.window.XMLSerializer;
+
+	const identifier = uuidv7();
+
+	// TODO
+
+	return new XMLSerializer().serializeToString(document);
+}
+
+function buildNav(nav: RawNavItem[]): string {
+	// TODO
+
+	return "";
 }
