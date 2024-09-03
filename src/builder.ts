@@ -67,6 +67,8 @@ export async function buildTextbook(input: RawTextbook) {
 			document.head.appendChild(link);
 		}
 
+		cleanNode(document.body);
+
 		for (const image of document.getElementsByTagName("img")) {
 			const src = new URL(image.src);
 			const filename = path.basename(src.pathname);
@@ -121,7 +123,10 @@ function buildPackage(
 
 	const metadata = document.getElementsByTagName("metadata")[0];
 
-	const identifier = document.createElement("dc:identifier");
+	const identifier = document.createElementNS(
+		"http://purl.org/dc/elements/1.1/",
+		"dc:identifier"
+	);
 	identifier.id = "BookId";
 	identifier.textContent = "urn:uuid:" + uuidv7();
 	metadata.appendChild(identifier);
@@ -204,15 +209,19 @@ function buildPackage(
 		spine.appendChild(spineElement);
 	}
 
+	let resourceCounter = 0;
+
 	for (const [resource, type] of resourceFiles.entries()) {
 		const manifestElement = document.createElementNS(
 			"http://www.idpf.org/2007/opf",
 			"item"
 		);
-		manifestElement.setAttribute("id", uuidv4());
+		manifestElement.setAttribute("id", resourceCounter.toString());
 		manifestElement.setAttribute("href", resource);
 		manifestElement.setAttribute("media-type", type);
 		manifest.append(manifestElement);
+
+		resourceCounter++;
 	}
 
 	return new XMLSerializer().serializeToString(document);
@@ -223,8 +232,6 @@ function buildNav(lang: string, nav: RawNavItem[]): string {
 
 	const dom = new JSDOM(
 		'<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html><html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" lang="' +
-			lang +
-			'" xml:lang="' +
 			lang +
 			'"><head><title>Book Navigation</title><meta charset="utf-8" /></head><body epub:type="frontmatter"><nav epub:type="toc" id="toc" role="doc-toc"><h1>Table of Contents</h1></nav><nav epub:type="landmarks" id="landmarks" hidden=""><h2>Landmarks</h2><ol><li><a epub:type="toc" href="#toc">Table of Contents</a></li></ol></nav></body></html>',
 		{ contentType: "application/xhtml+xml" }
@@ -263,4 +270,17 @@ function buildNavList(document: Document, nav: RawNavItem[]): HTMLOListElement {
 	}
 
 	return root;
+}
+
+function cleanNode(node: Node) {
+	for (const child of node.childNodes) {
+		if (
+			child.nodeType === 8 ||
+			(child.nodeType === 3 && child.nodeValue && !/\S/.test(child.nodeValue))
+		) {
+			node.removeChild(child);
+		} else if (child.nodeType === 1) {
+			cleanNode(child);
+		}
+	}
 }
