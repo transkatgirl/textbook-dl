@@ -31,7 +31,7 @@ export async function buildTextbook(input: RawTextbook) {
 	await mkdir(root);
 
 	if (input.stylesheet) {
-		cp(input.stylesheet, path.join(root, "styles.css"));
+		await cp(input.stylesheet, path.join(root, "styles.css"));
 	}
 
 	await writeFile(
@@ -110,6 +110,8 @@ function buildPackage(
 	input: RawTextbook,
 	resourceFiles: Map<string, string>
 ): string {
+	console.log("Building EPUB package document...");
+
 	const dom = new JSDOM(
 		'<?xml version="1.0" encoding="utf-8"?><package version="3.0" unique-identifier="BookId" xmlns="http://www.idpf.org/2007/opf"><metadata xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:opf="http://www.idpf.org/2007/opf"></metadata><item id="nav" href="nav.xhtml" media-type="application/xhtml+xml" properties="nav"/><manifest></manifest><spine><itemref idref="nav" linear="no"/></spine></package>',
 		{ contentType: "text/xml" }
@@ -190,6 +192,8 @@ function buildPackage(
 }
 
 function buildNav(lang: string, nav: RawNavItem[]): string {
+	console.log("Building EPUB navigation document...");
+
 	const dom = new JSDOM(
 		'<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html><html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" lang="' +
 			lang +
