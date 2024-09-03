@@ -67,8 +67,6 @@ export async function buildTextbook(input: RawTextbook) {
 			document.head.appendChild(link);
 		}
 
-		cleanNode(document.body);
-
 		for (const image of document.getElementsByTagName("img")) {
 			const src = new URL(image.src);
 			const filename = path.basename(src.pathname);
@@ -216,7 +214,7 @@ function buildPackage(
 			"http://www.idpf.org/2007/opf",
 			"item"
 		);
-		manifestElement.setAttribute("id", resourceCounter.toString());
+		manifestElement.setAttribute("id", "r" + resourceCounter.toString());
 		manifestElement.setAttribute("href", resource);
 		manifestElement.setAttribute("media-type", type);
 		manifest.append(manifestElement);
@@ -270,17 +268,4 @@ function buildNavList(document: Document, nav: RawNavItem[]): HTMLOListElement {
 	}
 
 	return root;
-}
-
-function cleanNode(node: Node) {
-	for (const child of node.childNodes) {
-		if (
-			child.nodeType === 8 ||
-			(child.nodeType === 3 && child.nodeValue && !/\S/.test(child.nodeValue))
-		) {
-			node.removeChild(child);
-		} else if (child.nodeType === 1) {
-			cleanNode(child);
-		}
-	}
 }
