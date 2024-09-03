@@ -77,7 +77,7 @@ switch (address.host) {
 downloadPromise
 	.then((textbook) => {
 		if (textbook) {
-			buildTextbook(textbook);
+			return buildTextbook(textbook);
 		}
 	})
 	.catch((error) => {
