@@ -32,6 +32,10 @@ export async function buildTextbook(input: RawTextbook) {
 		cp(input.stylesheet, path.join(root, "styles.css"));
 	}
 
+	// TODO: Build EPUB
+	await writeFile(path.join(root, "meta.json"), JSON.stringify(input.meta));
+	await writeFile(path.join(root, "nav.json"), JSON.stringify(input.nav));
+
 	const mediaRoot = path.join(root, "media");
 	await mkdir(mediaRoot);
 
@@ -65,6 +69,8 @@ export async function buildTextbook(input: RawTextbook) {
 			} else {
 				throw "Received status code " + response.status;
 			}
+
+			await new Promise((resolve) => setTimeout(resolve, 500));
 		}
 
 		const XMLSerializer = dom.window.XMLSerializer;
