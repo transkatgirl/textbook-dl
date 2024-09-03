@@ -34,11 +34,10 @@ export async function buildTextbook(input: RawTextbook) {
 		cp(input.stylesheet, path.join(root, "styles.css"));
 	}
 
-	// TODO: remove these two lines
-	await writeFile(path.join(root, "meta.json"), JSON.stringify(input.meta));
-	await writeFile(path.join(root, "nav.json"), JSON.stringify(input.nav));
-
-	await writeFile(path.join(root, "nav.xhtml"), buildNav(input.nav));
+	await writeFile(
+		path.join(root, "nav.xhtml"),
+		buildNav(input.meta.lang, input.nav)
+	);
 	await writeFile(path.join(root, "content.opf"), buildPackage(input));
 
 	const reservedRoot = path.join(root, "META-INF");
@@ -109,8 +108,46 @@ function buildPackage(input: RawTextbook): string {
 	return new XMLSerializer().serializeToString(document);
 }
 
-function buildNav(nav: RawNavItem[]): string {
-	// TODO
+function buildNav(lang: string, nav: RawNavItem[]): string {
+	const dom = new JSDOM(
+		'<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html><html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" lang="' +
+			lang +
+			'" xml:lang="' +
+			lang +
+			'"><head><title>Book Navigation</title><meta charset="utf-8" /></head><body epub:type="frontmatter"><nav epub:type="toc" id="toc" role="doc-toc"><h1>Table of Contents</h1></nav><nav epub:type="landmarks" id="landmarks" hidden=""><h2>Landmarks</h2><ol><li><a epub:type="toc" href="#toc">Table of Contents</a></li></ol></nav></html>',
+		{ contentType: "application/xhtml+xml" }
+	);
+	const document = dom.window.document;
 
-	return "";
+	const toc = document.getElementById("toc");
+	toc?.appendChild(buildNavList(document, nav));
+
+	return new XMLSerializer().serializeToString(document);
+}
+
+function buildNavList(document: Document, nav: RawNavItem[]): HTMLOListElement {
+	const root = document.createElement("ol");
+
+	for (const item of nav) {
+		const listItem = document.createElement("li");
+
+		if (item.filename) {
+			const anchor = document.createElement("a");
+			anchor.href = item.filename;
+			anchor.innerText = item.label;
+			listItem.appendChild(anchor);
+		} else {
+			const span = document.createElement("span");
+			span.innerText = item.label;
+			listItem.appendChild(span);
+		}
+
+		if (item.subitems.length > 0) {
+			listItem.appendChild(buildNavList(document, item.subitems));
+		}
+
+		root.appendChild(listItem);
+	}
+
+	return root;
 }
