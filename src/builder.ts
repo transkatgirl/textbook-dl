@@ -39,6 +39,8 @@ export async function buildTextbook(input: RawTextbook) {
 		buildNav(input.meta.lang, input.nav)
 	);
 
+	await writeFile(path.join(root, "mimetype"), "application/epub+zip");
+
 	const reservedRoot = path.join(root, "META-INF");
 	await mkdir(reservedRoot);
 
