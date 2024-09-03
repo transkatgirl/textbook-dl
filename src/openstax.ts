@@ -67,7 +67,7 @@ export async function download(address: URL) {
 
 	const meta: RawTextbookMetadata = {
 		title: bookTitle,
-		author: "OpenStax",
+		creators: ["OpenStax"],
 		lang: "en",
 		url: new URL(bookAddress),
 	};

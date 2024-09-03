@@ -12,7 +12,7 @@ export interface RawTextbook {
 
 export interface RawTextbookMetadata {
 	title: string;
-	author: string;
+	creators: string[];
 	lang: string;
 	url: URL;
 }
@@ -101,7 +101,38 @@ function buildPackage(input: RawTextbook): string {
 	const document = dom.window.document;
 	const XMLSerializer = dom.window.XMLSerializer;
 
-	const identifier = uuidv7();
+	const metadata = document.getElementsByTagName("metadata")[0];
+
+	const identifier = document.createElement("dc:identifier");
+	identifier.id = "BookId";
+	identifier.innerText = "urn:uuid:" + uuidv7();
+	metadata.appendChild(identifier);
+
+	const title = document.createElement("dc:title");
+	title.innerText = input.meta.title;
+	metadata.appendChild(title);
+
+	for (const creator of input.meta.creators) {
+		const element = document.createElement("dc:creator");
+		element.innerText = creator;
+		metadata.appendChild(element);
+	}
+
+	const description = document.createElement("dc:description");
+	description.innerText =
+		"Downloaded from " + input.meta.url + " using textbook-dl";
+	metadata.appendChild(description);
+
+	const language = document.createElement("dc:language");
+	language.innerText = input.meta.lang;
+	metadata.appendChild(language);
+
+	const date = document.createElement("meta");
+	date.setAttribute("property", "dcterms:modified");
+	date.innerText = new Date().toISOString();
+	metadata.appendChild(date);
+
+	const spine = document.getElementsByTagName("spine")[0];
 
 	// TODO
 
