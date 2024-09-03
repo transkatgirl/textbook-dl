@@ -111,7 +111,7 @@ function buildPackage(
 	resourceFiles: Map<string, string>
 ): string {
 	const dom = new JSDOM(
-		'<?xml version="1.0" encoding="utf-8"?><package version="3.0" unique-identifier="BookId" xmlns="http://www.idpf.org/2007/opf"><metadata xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:opf="http://www.idpf.org/2007/opf"></metadata><manifest></manifest><spine></spine></package>',
+		'<?xml version="1.0" encoding="utf-8"?><package version="3.0" unique-identifier="BookId" xmlns="http://www.idpf.org/2007/opf"><metadata xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:opf="http://www.idpf.org/2007/opf"></metadata><item id="nav" href="nav.xhtml" media-type="application/xhtml+xml" properties="nav"/><manifest></manifest><spine><itemref idref="nav" linear="no"/></spine></package>',
 		{ contentType: "text/xml" }
 	);
 	const document = dom.window.document;
