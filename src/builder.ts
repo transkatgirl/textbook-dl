@@ -203,6 +203,7 @@ function buildNav(lang: string, nav: RawNavItem[]): string {
 		{ contentType: "application/xhtml+xml" }
 	);
 	const document = dom.window.document;
+	const XMLSerializer = dom.window.XMLSerializer;
 
 	const toc = document.getElementById("toc");
 	toc?.appendChild(buildNavList(document, nav));
