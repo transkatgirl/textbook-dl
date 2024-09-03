@@ -179,9 +179,6 @@ function buildPackage(
 		manifestElement.setAttribute("id", uuidv4());
 		manifestElement.setAttribute("href", resource);
 		manifestElement.setAttribute("media-type", type);
-		if (type.toLowerCase() == "image/svg+xml") {
-			manifestElement.setAttribute("properties", "svg");
-		}
 		manifest.append(manifestElement);
 	}
 
