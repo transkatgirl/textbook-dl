@@ -55,7 +55,11 @@ export async function buildTextbook(input: RawTextbook) {
 	for (const [filename, contents] of input.pages.entries()) {
 		console.log("\nParsing " + filename + "...");
 
-		const dom = new JSDOM("<!DOCTYPE html><body>" + contents + "</body>");
+		const dom = new JSDOM(
+			'<!DOCTYPE html><head><meta charset="utf-8"/></head><body>' +
+				contents +
+				"</body>"
+		);
 		const document = dom.window.document;
 		const XMLSerializer = dom.window.XMLSerializer;
 
@@ -231,7 +235,7 @@ function buildNav(lang: string, nav: RawNavItem[]): string {
 	const dom = new JSDOM(
 		'<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html><html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" lang="' +
 			lang +
-			'"><head><title>Book Navigation</title><meta charset="utf-8" /></head><body epub:type="frontmatter"><nav epub:type="toc" id="toc" role="doc-toc"><h1>Table of Contents</h1></nav><nav epub:type="landmarks" id="landmarks" hidden=""><h2>Landmarks</h2><ol><li><a epub:type="toc" href="#toc">Table of Contents</a></li></ol></nav></body></html>',
+			'"><head><title>Book Navigation</title><meta charset="utf-8"/></head><body epub:type="frontmatter"><nav epub:type="toc" id="toc" role="doc-toc"><h1>Table of Contents</h1></nav><nav epub:type="landmarks" id="landmarks" hidden=""><h2>Landmarks</h2><ol><li><a epub:type="toc" href="#toc">Table of Contents</a></li></ol></nav></body></html>',
 		{ contentType: "application/xhtml+xml" }
 	);
 	const document = dom.window.document;
