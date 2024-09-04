@@ -15,8 +15,8 @@ npm install
 npm run start [book url]
 ```
 
-### Supported Sites
+### Supported URLs
 
-- OpenStax
+- https://openstax.org/books/* (OpenStax online textbook viewer)
 
 support for LibreTexts coming soon
