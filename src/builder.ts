@@ -2,7 +2,7 @@ import { cp, mkdir, writeFile } from "fs/promises";
 import { JSDOM } from "jsdom";
 import path from "path";
 import url, { URL } from "url";
-import { v7 as uuidv7 } from "uuid";
+import { v4 as uuidv4, v7 as uuidv7 } from "uuid";
 
 export interface RawTextbook {
 	meta: RawTextbookMetadata;
@@ -117,9 +117,6 @@ export async function buildTextbook(input: RawTextbook) {
 				continue;
 			}
 
-			const filename = path.basename(src.pathname);
-			const output = path.join(mediaRoot, filename);
-
 			console.log("Downloading " + src);
 
 			const rateLimitPromise = new Promise((resolve) =>
@@ -134,10 +131,80 @@ export async function buildTextbook(input: RawTextbook) {
 					throw "Unable to find content-type";
 				}
 
+				let filename = uuidv4();
+
+				switch (mime) {
+					case "image/png":
+						filename += ".png";
+						break;
+					case "image/jpeg":
+						filename += ".jpg";
+						break;
+					case "image/gif":
+						filename += ".gif";
+						break;
+					case "image/svg+xml":
+						filename += ".svg";
+						break;
+					case "image/webp":
+						filename += ".webp";
+						break;
+					default:
+						throw "Unknown MIME type";
+				}
+
 				const body = await response.arrayBuffer();
 
-				await writeFile(output, new DataView(body));
+				await writeFile(path.join(mediaRoot, filename), new DataView(body));
 				image.src = "media/" + filename;
+				mediaItems.set("media/" + filename, mime);
+			} else {
+				throw "Received status code " + response.status;
+			}
+
+			await rateLimitPromise;
+		}
+
+		for (const audio of document.getElementsByTagName("audio")) {
+			const src = URL.parse(audio.src);
+			if (!src) {
+				continue;
+			}
+
+			console.log("Downloading " + src);
+
+			const rateLimitPromise = new Promise((resolve) =>
+				setTimeout(resolve, 5000)
+			);
+
+			const response = await fetch(src);
+			if (response.ok) {
+				const mime = response.headers.get("Content-Type");
+
+				if (!mime) {
+					throw "Unable to find content-type";
+				}
+
+				let filename = uuidv4();
+
+				switch (mime) {
+					case "audio/mpeg":
+						filename += ".mp3";
+						break;
+					case "audio/mp4":
+						filename += ".mp4";
+						break;
+					case "audio/ogg; codecs=opus":
+						filename += ".ogg";
+						break;
+					default:
+						throw "Unknown MIME type";
+				}
+
+				const body = await response.arrayBuffer();
+
+				await writeFile(path.join(mediaRoot, filename), new DataView(body));
+				audio.src = "media/" + filename;
 				mediaItems.set("media/" + filename, mime);
 			} else {
 				throw "Received status code " + response.status;
