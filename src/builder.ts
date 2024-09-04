@@ -83,6 +83,8 @@ export async function buildTextbook(input: RawTextbook) {
 			document.head.appendChild(link);
 		}
 
+		console.log("Rewriting links...");
+
 		for (const anchor of document.getElementsByTagName("a")) {
 			const href = url.parse(anchor.href);
 
@@ -103,7 +105,7 @@ export async function buildTextbook(input: RawTextbook) {
 			if (filenameMappings.has(path)) {
 				href.pathname = filenameMappings.get(path);
 
-				console.log(anchor.href + " -> " + url.format(href));
+				//console.log(anchor.href + " -> " + url.format(href));
 
 				anchor.href = url.format(href);
 			}
