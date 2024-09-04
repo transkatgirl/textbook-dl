@@ -122,6 +122,10 @@ export async function buildTextbook(input: RawTextbook) {
 
 			console.log("Downloading " + src);
 
+			const rateLimitPromise = new Promise((resolve) =>
+				setTimeout(resolve, 500)
+			);
+
 			const response = await fetch(src);
 			if (response.ok) {
 				const mime = response.headers.get("Content-Type");
@@ -139,7 +143,7 @@ export async function buildTextbook(input: RawTextbook) {
 				throw "Received status code " + response.status;
 			}
 
-			await new Promise((resolve) => setTimeout(resolve, 500));
+			await rateLimitPromise;
 		}
 
 		const newFilename = transformFilename(filename);
