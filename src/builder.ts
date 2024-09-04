@@ -102,7 +102,10 @@ export async function buildTextbook(input: RawTextbook) {
 
 			if (filenameMappings.has(path)) {
 				href.pathname = filenameMappings.get(path);
-				anchor.href = href.href;
+
+				console.log(anchor.href + " -> " + url.format(href));
+
+				anchor.href = url.format(href);
 			}
 		}
 
@@ -137,13 +140,12 @@ export async function buildTextbook(input: RawTextbook) {
 			await new Promise((resolve) => setTimeout(resolve, 500));
 		}
 
-		console.log("Serializing page...");
+		const newFilename = transformFilename(filename);
+
+		console.log("Serializing page as " + newFilename + "...");
 
 		const serialized = new XMLSerializer().serializeToString(document);
-		await writeFile(
-			path.join(contentRoot, transformFilename(filename)),
-			serialized
-		);
+		await writeFile(path.join(contentRoot, newFilename), serialized);
 	}
 
 	await writeFile(
