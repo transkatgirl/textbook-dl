@@ -28,8 +28,10 @@ export interface RawNavItem {
 export async function buildTextbook(input: RawTextbook) {
 	console.log("\nBuilding textbook...");
 
-	const root = path.join(process.cwd(), "output");
-	await mkdir(root);
+	const identifier = uuidv7();
+
+	const root = path.join(path.join(process.cwd(), "output"), identifier);
+	await mkdir(root, { recursive: true });
 
 	await writeFile(path.join(root, "mimetype"), "application/epub+zip");
 
@@ -226,13 +228,14 @@ export async function buildTextbook(input: RawTextbook) {
 
 	await writeFile(
 		path.join(contentRoot, "content.opf"),
-		buildPackage(input, mediaItems)
+		buildPackage(input, mediaItems, identifier)
 	);
 }
 
 function buildPackage(
 	input: RawTextbook,
-	resourceFiles: Map<string, string>
+	resourceFiles: Map<string, string>,
+	uuid: string
 ): string {
 	console.log("Building EPUB package document...");
 
@@ -250,7 +253,7 @@ function buildPackage(
 		"dc:identifier"
 	);
 	identifier.id = "BookId";
-	identifier.textContent = "urn:uuid:" + uuidv7();
+	identifier.textContent = "urn:uuid:" + uuid;
 	metadata.appendChild(identifier);
 
 	const title = document.createElementNS(
