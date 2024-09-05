@@ -262,7 +262,27 @@ export async function buildTextbook(input: RawTextbook) {
 			throw "Unimplemented element";
 		}
 
+		for (const _ of document.getElementsByTagName("frame")) {
+			throw "Unimplemented element";
+		}
+
+		for (const _ of document.getElementsByTagName("image")) {
+			throw "Unimplemented element";
+		}
+
 		for (const _ of document.getElementsByTagName("script")) {
+			throw "Unimplemented element";
+		}
+
+		for (const _ of document.getElementsByTagName("form")) {
+			throw "Unimplemented element";
+		}
+
+		for (const _ of document.getElementsByTagName("button")) {
+			throw "Unimplemented element";
+		}
+
+		for (const _ of document.getElementsByTagName("canvas")) {
 			throw "Unimplemented element";
 		}
 
