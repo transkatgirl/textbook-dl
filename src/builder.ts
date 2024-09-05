@@ -70,7 +70,7 @@ export async function buildTextbook(input: RawTextbook) {
 		console.log("\nParsing " + filename + "...");
 
 		const dom = new JSDOM(
-			'<!DOCTYPE html><html xmlns="http://www.w3.org/1999/xhtml" xmlns:mathml="http://www.w3.org/1998/Math/MathML" xmlns:epub="http://www.idpf.org/2007/ops" lang="' +
+			'<!DOCTYPE html><html xmlns:mathml="http://www.w3.org/1998/Math/MathML" xmlns:epub="http://www.idpf.org/2007/ops" lang="' +
 				input.meta.lang +
 				'"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/></head><body>' +
 				contents +
