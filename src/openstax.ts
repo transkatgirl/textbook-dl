@@ -262,22 +262,28 @@ async function downloadPage(
 	);
 	const document = dom.window.document;
 
-	for (const element of document.getElementsByTagName("iframe")) {
-		const anchor = document.createElement("a");
-		const lazy_src = element.getAttribute("data-lazy-src");
+	const frames = document.getElementsByTagName("iframe");
 
-		if (lazy_src) {
-			element.removeAttribute("data-lazy-src");
-			element.setAttribute("src", lazy_src);
+	while (frames.length > 0) {
+		for (const frame of frames) {
+			const anchor = document.createElement("a");
+			const lazy_src = frame.getAttribute("data-lazy-src");
+
+			if (lazy_src) {
+				frame.removeAttribute("data-lazy-src");
+				frame.setAttribute("src", lazy_src);
+			}
+
+			if (!frame.src.startsWith("http")) {
+				throw "Invalid src attribute";
+			}
+
+			anchor.setAttribute("href", frame.src);
+			anchor.textContent = "View multimedia content";
+			anchor.setAttribute("style", "display: inherit!important;");
+
+			frame.replaceWith(anchor);
 		}
-
-		if (!element.src.startsWith("http")) {
-			throw "Invalid src attribute";
-		}
-
-		anchor.setAttribute("href", element.src);
-		anchor.textContent = "View multimedia content";
-		element.replaceWith(anchor);
 	}
 
 	/* for (const element of document.getElementsByTagName("image")) {
