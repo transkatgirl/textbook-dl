@@ -118,7 +118,7 @@ export async function buildTextbook(input: RawTextbook) {
 
 		for (const image of document.getElementsByTagName("img")) {
 			if (image.srcset) {
-				throw "Unimplemented attribute";
+				throw "Unimplemented attribute: srcset";
 			}
 
 			const src = URL.parse(image.src);
@@ -225,67 +225,67 @@ export async function buildTextbook(input: RawTextbook) {
 		}
 
 		for (const _ of document.getElementsByTagName("area")) {
-			throw "Unimplemented element";
+			throw "Unimplemented element: <area>";
 		}
 
 		for (const _ of document.getElementsByTagName("picture")) {
-			throw "Unimplemented element";
+			throw "Unimplemented element: <picture>";
 		}
 
 		for (const _ of document.getElementsByTagName("source")) {
-			throw "Unimplemented element";
+			throw "Unimplemented element: <source>";
 		}
 
 		for (const _ of document.getElementsByTagName("track")) {
-			throw "Unimplemented element";
+			throw "Unimplemented element: <track>";
 		}
 
 		for (const _ of document.getElementsByTagName("video")) {
-			throw "Unimplemented element";
+			throw "Unimplemented element: <video>";
 		}
 
 		for (const _ of document.getElementsByTagName("embed")) {
-			throw "Unimplemented element";
+			throw "Unimplemented element: <embed>";
 		}
 
 		for (const _ of document.getElementsByTagName("fencedframe")) {
-			throw "Unimplemented element";
+			throw "Unimplemented element: <fencedframe>";
 		}
 
 		for (const _ of document.getElementsByTagName("iframe")) {
-			throw "Unimplemented element";
+			throw "Unimplemented element: <iframe>";
 		}
 
 		for (const _ of document.getElementsByTagName("object")) {
-			throw "Unimplemented element";
+			throw "Unimplemented element: <object>";
 		}
 
 		for (const _ of document.getElementsByTagName("portal")) {
-			throw "Unimplemented element";
+			throw "Unimplemented element: <portal>";
 		}
 
 		for (const _ of document.getElementsByTagName("frame")) {
-			throw "Unimplemented element";
+			throw "Unimplemented element: <frame>";
 		}
 
 		for (const _ of document.getElementsByTagName("image")) {
-			throw "Unimplemented element";
+			throw "Unimplemented element: <image>";
 		}
 
 		for (const _ of document.getElementsByTagName("script")) {
-			throw "Unimplemented element";
+			throw "Unimplemented element: <script>";
 		}
 
 		for (const _ of document.getElementsByTagName("form")) {
-			throw "Unimplemented element";
+			throw "Unimplemented element: <form>";
 		}
 
 		for (const _ of document.getElementsByTagName("button")) {
-			throw "Unimplemented element";
+			throw "Unimplemented element: <button>";
 		}
 
 		for (const _ of document.getElementsByTagName("canvas")) {
-			throw "Unimplemented element";
+			throw "Unimplemented element: <canvas>";
 		}
 
 		const newFilename = transformFilename(filename);

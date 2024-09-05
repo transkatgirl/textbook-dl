@@ -262,6 +262,24 @@ async function downloadPage(
 	);
 	const document = dom.window.document;
 
+	for (const element of document.getElementsByTagName("iframe")) {
+		const anchor = document.createElement("a");
+		const lazy_src = element.getAttribute("data-lazy-src");
+
+		if (lazy_src) {
+			element.removeAttribute("data-lazy-src");
+			element.setAttribute("src", lazy_src);
+		}
+
+		if (!element.src.startsWith("http")) {
+			throw "Invalid src attribute";
+		}
+
+		anchor.setAttribute("href", element.src);
+		anchor.textContent = "View multimedia content";
+		element.replaceWith(anchor);
+	}
+
 	/* for (const element of document.getElementsByTagName("image")) {
 		const img = document.createElement("img");
 		const src = element.getAttribute("src");
@@ -278,27 +296,6 @@ async function downloadPage(
 		}
 		element.replaceWith(img);
 	} */
-
-	for (const element of document.getElementsByTagName("iframe")) {
-		const anchor = document.createElement("a");
-		let src = element.getAttribute("src");
-
-		if (!src) {
-			src = element.getAttribute("data-lazy-src");
-		}
-
-		if (!src) {
-			throw "Missing src attribute";
-		}
-
-		if (!src.startsWith("http")) {
-			throw "Invalid src attribute";
-		}
-
-		anchor.setAttribute("href", src);
-		anchor.textContent = "View multimedia content";
-		element.replaceWith(anchor);
-	}
 
 	const images = document.getElementsByTagName("img");
 
