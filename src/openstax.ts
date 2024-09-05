@@ -281,14 +281,22 @@ async function downloadPage(
 
 	for (const element of document.getElementsByTagName("iframe")) {
 		const anchor = document.createElement("a");
-		const src = element.src;
+		let src = element.getAttribute("src");
+
+		if (!src) {
+			src = element.getAttribute("data-lazy-src");
+		}
 
 		if (!src) {
 			throw "Missing src attribute";
 		}
 
+		if (!src.startsWith("http")) {
+			throw "Invalid src attribute";
+		}
+
 		anchor.setAttribute("href", src);
-		anchor.textContent = "View external content";
+		anchor.textContent = "View multimedia content";
 		element.replaceWith(anchor);
 	}
 
