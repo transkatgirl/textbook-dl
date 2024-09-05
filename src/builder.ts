@@ -78,6 +78,7 @@ export async function buildTextbook(input: RawTextbook) {
 		if (input.stylesheet) {
 			const link = document.createElement("link");
 			link.rel = "stylesheet";
+			link.type = "text/css";
 			link.href = "styles.css";
 
 			document.head.appendChild(link);
@@ -352,9 +353,9 @@ function buildNav(lang: string, nav: RawNavItem[]): string {
 	console.log("Building EPUB navigation document...");
 
 	const dom = new JSDOM(
-		'<!DOCTYPE html><html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" lang="' +
+		'<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html><html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" lang="' +
 			lang +
-			'"><head><meta charset="utf-8"/><title>Book Navigation</title></head><body epub:type="frontmatter"><nav epub:type="toc" id="toc" role="doc-toc"><h1>Table of Contents</h1></nav><nav epub:type="landmarks" id="landmarks" hidden=""><h2>Landmarks</h2><ol><li><a epub:type="toc" href="#toc">Table of Contents</a></li></ol></nav></body></html>',
+			'"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>Book Navigation</title></head><body epub:type="frontmatter"><nav epub:type="toc" id="toc" role="doc-toc"><h1>Table of Contents</h1></nav><nav epub:type="landmarks" id="landmarks" hidden=""><h2>Landmarks</h2><ol><li><a epub:type="toc" href="#toc">Table of Contents</a></li></ol></nav></body></html>',
 		{ contentType: "application/xhtml+xml" }
 	);
 	const document = dom.window.document;
