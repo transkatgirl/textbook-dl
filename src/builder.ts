@@ -230,6 +230,8 @@ export async function buildTextbook(input: RawTextbook) {
 		path.join(contentRoot, "content.opf"),
 		buildPackage(input, mediaItems, identifier)
 	);
+
+	console.log("\nCreated EPUB with ID " + identifier);
 }
 
 function buildPackage(
