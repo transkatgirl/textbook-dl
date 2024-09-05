@@ -157,6 +157,7 @@ function handleListingItem(element: HTMLLIElement): RawNavItem | void {
 	}
 	if (
 		element.getAttribute("data-type") == "chapter" ||
+		element.getAttribute("data-type") == "unit" ||
 		element.getAttribute("data-type") == "eoc-dropdown" ||
 		element.getAttribute("data-type") == "eob-dropdown"
 	) {
