@@ -340,7 +340,7 @@ function buildPackage(
 			"http://purl.org/dc/elements/1.1/",
 			"dc:creator"
 		);
-		element.innerHTML = creator;
+		element.textContent = creator;
 		metadata.appendChild(element);
 	}
 
@@ -355,7 +355,7 @@ function buildPackage(
 		"http://purl.org/dc/elements/1.1/",
 		"dc:description"
 	);
-	description.innerHTML =
+	description.textContent =
 		"Downloaded from " + input.meta.url.href + " using textbook-dl";
 	metadata.appendChild(description);
 

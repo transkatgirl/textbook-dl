@@ -262,6 +262,36 @@ async function downloadPage(
 	);
 	const document = dom.window.document;
 
+	/* for (const element of document.getElementsByTagName("image")) {
+		const img = document.createElement("img");
+		const src = element.getAttribute("src");
+
+		if (!src) {
+			throw "Missing src attribute";
+		}
+
+		img.src = src;
+
+		const alt = element.getAttribute("alt");
+		if (alt) {
+			img.alt = alt;
+		}
+		element.replaceWith(img);
+	} */
+
+	for (const element of document.getElementsByTagName("iframe")) {
+		const anchor = document.createElement("a");
+		const src = element.src;
+
+		if (!src) {
+			throw "Missing src attribute";
+		}
+
+		anchor.setAttribute("href", src);
+		anchor.textContent = "View external content";
+		element.replaceWith(anchor);
+	}
+
 	const images = document.getElementsByTagName("img");
 
 	for (const image of images) {
