@@ -156,8 +156,9 @@ export async function buildTextbook(input: RawTextbook) {
 						filename += ".svg";
 						break;
 					case "image/webp":
-						filename += ".webp";
-						break;
+						throw "Unsupported MIME type";
+					/* filename += ".webp";
+						break; */
 					default:
 						throw "Unknown MIME type";
 				}
@@ -204,8 +205,9 @@ export async function buildTextbook(input: RawTextbook) {
 						filename += ".mp4";
 						break;
 					case "audio/ogg; codecs=opus":
-						filename += ".ogg";
-						break;
+						throw "Unsupported MIME type";
+					/* filename += ".ogg";
+						break; */
 					default:
 						throw "Unknown MIME type";
 				}
