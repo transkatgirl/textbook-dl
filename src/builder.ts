@@ -117,9 +117,13 @@ export async function buildTextbook(input: RawTextbook) {
 		}
 
 		for (const image of document.getElementsByTagName("img")) {
+			if (image.srcset) {
+				throw "Unimplemented attribute";
+			}
+
 			const src = URL.parse(image.src);
 			if (!src) {
-				continue;
+				throw "Unable to find <img> src";
 			}
 
 			console.log("Downloading " + src);
@@ -173,7 +177,7 @@ export async function buildTextbook(input: RawTextbook) {
 		for (const audio of document.getElementsByTagName("audio")) {
 			const src = URL.parse(audio.src);
 			if (!src) {
-				continue;
+				throw "Unable to find <audio> src";
 			}
 
 			console.log("Downloading " + src);
@@ -216,6 +220,50 @@ export async function buildTextbook(input: RawTextbook) {
 			}
 
 			await rateLimitPromise;
+		}
+
+		for (const _ of document.getElementsByTagName("area")) {
+			throw "Unimplemented element";
+		}
+
+		for (const _ of document.getElementsByTagName("picture")) {
+			throw "Unimplemented element";
+		}
+
+		for (const _ of document.getElementsByTagName("source")) {
+			throw "Unimplemented element";
+		}
+
+		for (const _ of document.getElementsByTagName("track")) {
+			throw "Unimplemented element";
+		}
+
+		for (const _ of document.getElementsByTagName("video")) {
+			throw "Unimplemented element";
+		}
+
+		for (const _ of document.getElementsByTagName("embed")) {
+			throw "Unimplemented element";
+		}
+
+		for (const _ of document.getElementsByTagName("fencedframe")) {
+			throw "Unimplemented element";
+		}
+
+		for (const _ of document.getElementsByTagName("iframe")) {
+			throw "Unimplemented element";
+		}
+
+		for (const _ of document.getElementsByTagName("object")) {
+			throw "Unimplemented element";
+		}
+
+		for (const _ of document.getElementsByTagName("portal")) {
+			throw "Unimplemented element";
+		}
+
+		for (const _ of document.getElementsByTagName("script")) {
+			throw "Unimplemented element";
 		}
 
 		const newFilename = transformFilename(filename);
