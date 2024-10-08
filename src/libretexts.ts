@@ -2,6 +2,7 @@ import { Builder, Browser, By, WebDriver } from "selenium-webdriver";
 import { Options } from "selenium-webdriver/chrome";
 import { JSDOM } from "jsdom";
 import { RawNavItem, RawTextbookMetadata } from "./builder";
+import path from "path";
 
 export async function download(address: URL) {
 	console.log("Starting WebDriver...");
@@ -103,10 +104,22 @@ export async function download(address: URL) {
 		url: new URL(bookAddress),
 	};
 
+	const pages = await downloadPages(driver, meta, nav).then(
+		(pages) => new Map(pages)
+	);
+
 	await driver.quit();
 
-	console.log(JSON.stringify(nav));
-	console.log(JSON.stringify(meta));
+	const stylesheet = path.resolve(__dirname, "../src/libretexts.css");
+
+	if (pages) {
+		return {
+			meta,
+			nav,
+			pages,
+			stylesheet,
+		};
+	}
 }
 
 async function initPage(driver: WebDriver) {
@@ -174,4 +187,46 @@ function handleListingItem(element: HTMLLIElement): RawNavItem | void {
 			};
 		}
 	}
+}
+
+async function downloadPages(
+	driver: WebDriver,
+	meta: RawTextbookMetadata,
+	nav: RawNavItem[]
+): Promise<[string, string][]> {
+	const downloaded: [string, string][] = [];
+
+	for (let i = 0; i < nav.length; i++) {
+		const item = nav[i];
+
+		if (item.url) {
+			const filename = path.basename(item.url.pathname);
+
+			const download = await downloadPage(driver, item.url);
+
+			if (download) {
+				downloaded.push([filename, download]);
+			}
+			nav[i].filename = filename;
+		}
+		if (item.subitems.length > 0) {
+			const subitemDownload = await downloadPages(driver, meta, item.subitems);
+
+			for (const download of subitemDownload) {
+				downloaded.push(download);
+			}
+		}
+	}
+
+	return downloaded;
+}
+
+async function downloadPage(
+	driver: WebDriver,
+	address: URL
+): Promise<string | void> {
+	console.log("\nLoading URL " + address.href);
+	await driver.get(address.href);
+
+	await initPage(driver);
 }
