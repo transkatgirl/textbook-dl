@@ -1,7 +1,7 @@
 import { Builder, Browser, By, WebDriver } from "selenium-webdriver";
 import { Options } from "selenium-webdriver/chrome";
 import { JSDOM } from "jsdom";
-import { RawNavItem } from "./builder";
+import { RawNavItem, RawTextbookMetadata } from "./builder";
 
 export async function download(address: URL) {
 	console.log("Starting WebDriver...");
@@ -32,6 +32,7 @@ export async function download(address: URL) {
 		By.css("#elm-main-content #title")
 	);
 	const bookTitle = await titleElement.getText();
+	const bookAddress = await titleElement.getAttribute("href");
 
 	const authorElement = await driver.findElements(
 		By.css(
@@ -95,9 +96,17 @@ export async function download(address: URL) {
 
 	const nav = parseToc(tocRoot);
 
+	const meta: RawTextbookMetadata = {
+		title: bookTitle,
+		creators: [bookAuthor],
+		lang: "en",
+		url: new URL(bookAddress),
+	};
+
 	await driver.quit();
 
 	console.log(JSON.stringify(nav));
+	console.log(JSON.stringify(meta));
 }
 
 async function initPage(driver: WebDriver) {
