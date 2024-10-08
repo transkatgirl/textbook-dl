@@ -234,7 +234,26 @@ async function downloadPage(
 
 	await initPage(driver);
 
-	// TODO: Grab content from #elm-main-content, remove:
-	// - header ol[data-ga-action='Page actions']
-	// - .mt-author-container
+	console.log("Attempting to get page content...");
+	const main = await driver.findElement(By.id("elm-main-content"));
+
+	const content = await main.getAttribute("innerHTML");
+
+	const dom = new JSDOM(
+		'<!DOCTYPE html><body><div id="main-content">' + content + "</div></body>",
+		{
+			url: address.href,
+		}
+	);
+	const document = dom.window.document;
+
+	// TODO:
+	// - Download images
+	// - Remove: header ol[data-ga-action='Page actions']
+	// - Remove: .mt-author-container
+	// - Remove: <script>
+
+	console.log("Archived " + address.href);
+
+	return document.body.innerHTML;
 }
