@@ -35,7 +35,7 @@ export async function download(address: URL) {
 
 	const authorElement = await driver.findElements(
 		By.css(
-			".mt-author-container .mt-author-programname, .mt-author-container .mt-author-companyname, .mt-author-container .mt-author-information"
+			".mt-author-container .mt-author-programname, .mt-author-container .mt-author-companyname"
 		)
 	);
 	if (authorElement.length != 1) {
