@@ -239,6 +239,8 @@ async function downloadPage(
 
 	const content = await main.getAttribute("innerHTML");
 
+	console.log("Parsing content...");
+
 	const dom = new JSDOM(
 		'<!DOCTYPE html><body><div id="main-content">' + content + "</div></body>",
 		{
