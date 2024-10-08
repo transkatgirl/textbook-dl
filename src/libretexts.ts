@@ -34,7 +34,9 @@ export async function download(address: URL) {
 	const bookTitle = await titleElement.getText();
 
 	const authorElement = await driver.findElements(
-		By.css(".mt-author-container .mt-author-programname")
+		By.css(
+			".mt-author-container .mt-author-programname, .mt-author-container .mt-author-companyname, .mt-author-container .mt-author-information"
+		)
 	);
 	if (authorElement.length != 1) {
 		throw "URL must be to the book's root!";
@@ -78,8 +80,6 @@ export async function download(address: URL) {
 
 	const tocHTML = await toc.getAttribute("innerHTML");
 
-	await driver.quit();
-
 	console.log("Parsing table of contents...");
 
 	const dom = new JSDOM(
@@ -95,7 +95,9 @@ export async function download(address: URL) {
 
 	const nav = parseToc(tocRoot);
 
-	console.log(nav);
+	await driver.quit();
+
+	console.log(JSON.stringify(nav));
 }
 
 async function initPage(driver: WebDriver) {
