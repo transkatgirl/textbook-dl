@@ -32,7 +32,7 @@ export async function download(address: URL) {
 		By.css("#elm-main-content #title")
 	);
 	const bookTitle = await titleElement.getText();
-	const bookAddress = await titleElement.getAttribute("href");
+	const bookAddress = address;
 
 	const authorElement = await driver.findElements(
 		By.css(
