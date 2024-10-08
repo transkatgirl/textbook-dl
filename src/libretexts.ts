@@ -1,6 +1,7 @@
 import { Builder, Browser, By, WebDriver } from "selenium-webdriver";
 import { Options } from "selenium-webdriver/chrome";
 import { JSDOM } from "jsdom";
+import { RawNavItem } from "./builder";
 
 export async function download(address: URL) {
 	console.log("Starting WebDriver...");
@@ -79,18 +80,6 @@ export async function download(address: URL) {
 
 	await driver.quit();
 
-	/*console.log("Attempting to get page list...");
-	const tocItems = await toc.findElements(By.css(".fancytree-node a"));
-
-	for (const item of tocItems) {
-		const contentTitle = await item.getText();
-		const contentURL = await item.getAttribute("href");
-
-		console.log(contentTitle + " - " + contentURL);
-	}
-
-	console.log(toc);*/
-
 	console.log("Parsing table of contents...");
 
 	const dom = new JSDOM(
@@ -100,9 +89,13 @@ export async function download(address: URL) {
 
 	const tocRoot = document.getElementById("toc-root");
 
-	if (tocRoot) {
-		return parseToc(tocRoot);
+	if (!tocRoot) {
+		return;
 	}
+
+	const nav = parseToc(tocRoot);
+
+	console.log(nav);
 }
 
 async function initPage(driver: WebDriver) {
@@ -112,4 +105,62 @@ async function initPage(driver: WebDriver) {
 	await driver.manage().setTimeouts({ implicit: 3000 });
 }
 
-function parseToc(root: HTMLElement) {}
+function parseToc(root: HTMLElement) {
+	const items: RawNavItem[] = [];
+
+	for (const element of root.children) {
+		if (element.tagName == "LI") {
+			const item = handleListingItem(element as HTMLLIElement);
+
+			if (item) {
+				items.push(item);
+			}
+		}
+	}
+
+	return items;
+}
+
+function handleListingItem(element: HTMLLIElement): RawNavItem | void {
+	const span = element.querySelector("span");
+
+	if (span && span.classList.contains("fancytree-node")) {
+		const title = element.querySelector(".fancytree-title");
+
+		if (title && title.textContent) {
+			const label = title.textContent;
+
+			const anchor = title.querySelector("a");
+
+			let url;
+
+			if (anchor) {
+				url = new URL(anchor.href);
+			}
+
+			const subitems: RawNavItem[] = [];
+
+			if (span.classList.contains("fancytree-has-children")) {
+				const list = element.querySelector("ul");
+
+				if (list) {
+					for (const childElement of list.children) {
+						if (childElement.tagName == "LI") {
+							const subitem = handleListingItem(childElement as HTMLLIElement);
+
+							if (subitem) {
+								subitems.push(subitem);
+							}
+						}
+					}
+				}
+			}
+
+			return {
+				label,
+				url,
+				subitems,
+			};
+		}
+	}
+}
