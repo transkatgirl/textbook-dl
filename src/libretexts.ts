@@ -4,6 +4,10 @@ import { JSDOM } from "jsdom";
 import { RawNavItem, RawTextbookMetadata } from "./builder";
 import path from "path";
 
+// Note: Libretexts CSS is from https://a.mtstatic.com/@cache/layout/print.css?_=99d83fb44eaebe60981933ec554d138d:site_4425 (last retrieved on Oct 8 2024)
+
+// TODO: Modify CSS to embed custom icon font + add margin
+
 export async function download(address: URL) {
 	console.log("Starting WebDriver...");
 
