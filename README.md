@@ -20,5 +20,3 @@ npm run start [book url]
 - https://openstax.org/books/* (OpenStax online textbook viewer)
 
 support for LibreTexts coming soon
-
-support for CK-12 coming soon
