@@ -249,11 +249,32 @@ async function downloadPage(
 	);
 	const document = dom.window.document;
 
-	// TODO:
-	// - Download images
-	// - Remove: header ol[data-ga-action='Page actions']
-	// - Remove: .mt-author-container
-	// - Remove: <script>
+	document.querySelector("#flash-messages")?.remove();
+	document.querySelector('header ol[data-ga-action="Page actions"]')?.remove();
+	document.querySelector(".mt-content-header")?.remove();
+
+	for (const element of document.querySelectorAll(
+		".MathJax_Preview, .MathJax_Display"
+	)) {
+		element.remove();
+	}
+
+	for (const element of document.querySelectorAll(".MathJax")) {
+		const container = document.createElement("div");
+		container.innerHTML = element.innerHTML;
+
+		const math = container.querySelector("math");
+
+		if (math) {
+			element.replaceWith(math);
+		}
+	}
+
+	// ! WIP
+
+	for (const element of document.querySelectorAll("script")) {
+		element.remove();
+	}
 
 	console.log("Archived " + address.href);
 
