@@ -4,15 +4,13 @@ import { JSDOM } from "jsdom";
 import { RawNavItem, RawTextbookMetadata } from "./builder";
 import path from "path";
 
-// Note: Libretexts CSS is (mostly) from:
-// - https://a.mtstatic.com/@cache/layout/anonymous.css?_=93f1867715eb41aa364510e35ff484b2_bWF0aC5saWJyZXRleHRzLm9yZw==:site_4425 (last retrieved on Oct 8 2024)
-// - https://cdn.libretexts.net/github/LibreTextsMain/Aryan%20Suri/Citation/citation.css (last retrieved on Oct 15 2024)
-// - https://cdn.libretexts.net/github/LibreTextsMain/LicenseControl/licensecontrol.min.css (last retrieved on Oct 15 2024)
-// - shared(?) inline page CSS (last retrieved on Oct 8 2024)
-// - custom CSS
-//   body{margin: 1lh}
-
-// TODO: Modify CSS to embed custom icon font + add margin
+// Note: Libretexts CSS is from:
+// - https://a.mtstatic.com/@cache/layout/anonymous.css?_=93f1867715eb41aa364510e35ff484b2_bWF0aC5saWJyZXRleHRzLm9yZw==:site_4425 (last retrieved on Oct 15 2024)
+// - https://pro.fontawesome.com/releases/v5.10.1/css/all.css (last retrieved on Oct 15 2024)
+//   - https://pro.fontawesome.com/releases/v5.10.1/webfonts/fa-regular-400.woff2
+// - shared(?) inline page CSS (last retrieved on Oct 15 2024)
+// - custom CSS:
+//     body{margin: 1lh}
 
 export async function download(address: URL) {
 	console.log("Starting WebDriver...");
@@ -314,6 +312,8 @@ async function downloadPage(
 	for (const element of document.querySelectorAll("style, script")) {
 		element.remove();
 	}
+
+	document.body.appendChild(document.createElement("br"));
 
 	console.log("Archived " + address.href);
 
