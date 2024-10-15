@@ -4,7 +4,12 @@ import { JSDOM } from "jsdom";
 import { RawNavItem, RawTextbookMetadata } from "./builder";
 import path from "path";
 
-// Note: Libretexts CSS is (mostly) from https://a.mtstatic.com/@cache/layout/anonymous.css?_=93f1867715eb41aa364510e35ff484b2_bWF0aC5saWJyZXRleHRzLm9yZw==:site_4425 (last retrieved on Oct 8 2024) + inline page CSS (last retrieved on Oct 8 2024)
+// Note: Libretexts CSS is (mostly) from:
+// - https://a.mtstatic.com/@cache/layout/anonymous.css?_=93f1867715eb41aa364510e35ff484b2_bWF0aC5saWJyZXRleHRzLm9yZw==:site_4425 (last retrieved on Oct 8 2024)
+// - https://cdn.libretexts.net/github/LibreTextsMain/Leo%20Jayachandran/Glossarizer/libretextsGlossarizer.css (last retrieved on Oct 15 2024)
+// - https://cdn.libretexts.net/github/LibreTextsMain/Aryan%20Suri/Citation/citation.css (last retrieved on Oct 15 2024)
+// - https://cdn.libretexts.net/github/LibreTextsMain/LicenseControl/licensecontrol.min.css (last retrieved on Oct 15 2024)
+// - shared(?) inline page CSS (last retrieved on Oct 8 2024)
 
 // TODO: Modify CSS to embed custom icon font + add margin
 

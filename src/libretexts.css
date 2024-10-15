@@ -66836,3 +66836,188 @@ a:focus {
         display: none;
     }
 }
+
+.tippy-box[data-theme~='light'] {
+    background-color: #e7f6fe;
+    color: black;
+    border: 2px solid #34b4f5;
+    text-align: left;
+    color: #0a73a5;
+}
+.tippy-box[data-theme~='light'] > .tippy-arrow::before {
+    background: #e7f6fe;
+    border: 2px solid #34b4f5;
+    margin: -2px;
+}
+
+.tippy-box[data-theme~='dark'] {
+    background-color: #333;
+    border: 2px solid black;
+    text-align:left;
+    color: white;
+}
+.tippy-box[data-theme~='dark'] > .tippy-arrow::before {
+    background: #333;
+    border: 2px solid black;
+    margin: -2px;
+}
+
+[data-tippy-root] {
+    display: inline;
+}
+
+.glossarizer_replaced:hover {
+    border-bottom: 1px #333 dotted;
+    background-color:#bbe2f8;
+}
+
+.glossarizer_replaced {
+    cursor: help;
+    display: inline;
+    text-decoration-line: none;
+}
+.tippy-arrow {
+    color: #30b3f6;
+    margin: -2px;
+}
+
+[data-tippy-root] {
+    display: inline;
+}
+
+.glossaryTable {
+    display: none;
+}
+.glossaryTerm {
+    font-weight: bold;
+}
+
+p.glossaryElement {
+    font-size: 1.0em;
+    margin: 0.5rem 0 1em;
+}
+
+@media print {
+    .glossaryDefinition {
+        font-size: 0.85em;
+    }
+    p.glossaryElement {
+        break-inside: avoid;
+        margin: 0.4rem 0;
+        font-size: 0.9em;
+        line-height: 0.9em;
+    }
+}
+
+#attrModal,
+#asModal {
+    display: flex;
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0,0,0);
+    background-color: rgba(0,0,0,0.4);
+}
+
+#attrModalContent,
+#asModalContent {
+    background-color: white;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 40%;
+    font-size: 18px;
+}
+
+span.closeModal {
+    color: black;
+    float: right;
+    font-size: 1.3em;
+    font-weight: bold;
+    line-height: 1em;
+    vertical-align: middle;
+}
+span.closeModal:hover,
+span.closeModal:focus {
+    color: red;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+ h5#modalTitle {
+    margin: 0 !important;
+    padding: 0;
+    font-weight: normal;
+    color: black;
+    border-bottom: 1px solid lightgrey;
+    padding-bottom: 0.75em;
+    font-size: 1.3em;
+}
+
+#citeContent, #attr-links {
+    border-top: 1px solid lightgrey;
+    padding-top: 1em;
+    margin-top: 1em;
+    display: flex;
+    justify-content: space-between;
+}
+
+#attr-links > a,
+#citeContent > a {
+    padding: 0.5em 0.75em;
+    border-radius: 4px;
+    color: #555;
+    font-size: 1em;
+}
+#attr-links > a:hover,
+#attr-links > a:focus
+#citeContent > a:hover,
+#citeContent > a:focus {
+    background: #efecec;
+    color: black;
+}
+
+#citeSelect {
+    max-width: 30%;
+}
+
+#warningModal {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    margin: 0;
+    display: none;
+    z-index: 10000;
+    padding-top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: #000;
+    background-color:rgb(0, 0, 0, 0)
+}
+
+#warningModalContent {
+    font-family: Roboto;
+    font-size: 14px;
+    background-color: #efefef;
+    margin: auto;
+    padding: 15px;
+    width: 40%;
+    box-shadow:-2px 8px 10px #c7c7c7
+}
+
+.libre-cc-icons img {
+    height: 25px;
+    vertical-align: top;
+    margin-top:1px
+}
+
+.libre-cc-icons img:not(:last-child) {
+    padding-right: 2px
+}
