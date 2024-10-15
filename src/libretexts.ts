@@ -6,10 +6,11 @@ import path from "path";
 
 // Note: Libretexts CSS is (mostly) from:
 // - https://a.mtstatic.com/@cache/layout/anonymous.css?_=93f1867715eb41aa364510e35ff484b2_bWF0aC5saWJyZXRleHRzLm9yZw==:site_4425 (last retrieved on Oct 8 2024)
-// - https://cdn.libretexts.net/github/LibreTextsMain/Leo%20Jayachandran/Glossarizer/libretextsGlossarizer.css (last retrieved on Oct 15 2024)
 // - https://cdn.libretexts.net/github/LibreTextsMain/Aryan%20Suri/Citation/citation.css (last retrieved on Oct 15 2024)
 // - https://cdn.libretexts.net/github/LibreTextsMain/LicenseControl/licensecontrol.min.css (last retrieved on Oct 15 2024)
 // - shared(?) inline page CSS (last retrieved on Oct 8 2024)
+// - custom CSS
+//   body{margin: 1lh}
 
 // TODO: Modify CSS to embed custom icon font + add margin
 
@@ -240,19 +241,12 @@ async function downloadPage(
 	await initPage(driver);
 
 	console.log("Attempting to get page content...");
-	const main = await driver.findElement(By.id("elm-main-content"));
+	const main = await driver.findElement(
+		By.css("#elm-main-content > .mt-content-container")
+	);
 
-	const content = await main.getAttribute("innerHTML");
-
-	console.log("Parsing content...");
-
-	const dom = new JSDOM("<!DOCTYPE html><body>" + content + "</body>", {
-		url: address.href,
-	});
-	const document = dom.window.document;
-
-	for (const element of document.querySelectorAll(
-		".MathJax_Preview, .MathJax_Display, body > :not(.mt-content-container), body > .mt-content-container > footer.mt-content-footer"
+	await driver.executeScript(`for (const element of document.querySelectorAll(
+		".MathJax_Preview, .MathJax_Display"
 	)) {
 		element.remove();
 	}
@@ -267,6 +261,55 @@ async function downloadPage(
 			element.replaceWith(math);
 		}
 	}
+
+	for (const element of document.querySelectorAll(".glossarizer_replaced")) {
+		const span = document.createElement("span");
+		span.innerHTML = element.innerHTML;
+
+		element.replaceWith(span);
+	}`);
+
+	const content = await main.getAttribute("innerHTML");
+
+	console.log("Parsing content...");
+
+	const dom = new JSDOM(
+		'<!DOCTYPE html><body><div class="mt-content-container">' +
+			content +
+			"</div></body>",
+		{
+			url: address.href,
+		}
+	);
+	const document = dom.window.document;
+
+	document
+		.querySelector("body > .mt-content-container > footer.mt-content-footer")
+		?.remove();
+
+	/*for (const element of document.querySelectorAll(
+		".MathJax_Preview, .MathJax_Display"
+	)) {
+		element.remove();
+	}
+
+	for (const element of document.querySelectorAll(".MathJax")) {
+		const container = document.createElement("div");
+		container.innerHTML = element.innerHTML;
+
+		const math = container.querySelector("math");
+
+		if (math) {
+			element.replaceWith(math);
+		}
+	}
+
+	for (const element of document.querySelectorAll(".glossarizer_replaced")) {
+		const span = document.createElement("span");
+		span.innerHTML = element.innerHTML;
+
+		element.replaceWith(span);
+	}*/
 
 	for (const element of document.querySelectorAll("style, script")) {
 		element.remove();
