@@ -247,7 +247,7 @@ async function downloadPage(
 	const document = dom.window.document;
 
 	for (const element of document.querySelectorAll(
-		".MathJax_Preview, .MathJax_Display, body > :not(.mt-content-container)"
+		".MathJax_Preview, .MathJax_Display, body > :not(.mt-content-container), body > .mt-content-container > footer.mt-content-footer"
 	)) {
 		element.remove();
 	}
@@ -262,8 +262,6 @@ async function downloadPage(
 			element.replaceWith(math);
 		}
 	}
-
-	// ! WIP
 
 	for (const element of document.querySelectorAll("style, script")) {
 		element.remove();
