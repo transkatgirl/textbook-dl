@@ -241,20 +241,13 @@ async function downloadPage(
 
 	console.log("Parsing content...");
 
-	const dom = new JSDOM(
-		'<!DOCTYPE html><body><div id="main-content">' + content + "</div></body>",
-		{
-			url: address.href,
-		}
-	);
+	const dom = new JSDOM("<!DOCTYPE html><body>" + content + "</body>", {
+		url: address.href,
+	});
 	const document = dom.window.document;
 
-	document.querySelector("#flash-messages")?.remove();
-	document.querySelector('header ol[data-ga-action="Page actions"]')?.remove();
-	document.querySelector(".mt-content-header")?.remove();
-
 	for (const element of document.querySelectorAll(
-		".MathJax_Preview, .MathJax_Display"
+		".MathJax_Preview, .MathJax_Display, body > :not(.mt-content-container)"
 	)) {
 		element.remove();
 	}
@@ -272,7 +265,7 @@ async function downloadPage(
 
 	// ! WIP
 
-	for (const element of document.querySelectorAll("script")) {
+	for (const element of document.querySelectorAll("style, script")) {
 		element.remove();
 	}
 
