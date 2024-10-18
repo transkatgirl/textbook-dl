@@ -272,7 +272,7 @@ async function downloadPage(
 	console.log("Parsing content...");
 
 	const dom = new JSDOM(
-		'<!DOCTYPE html><body><div class="mt-content-container">' +
+		'<!DOCTYPE html><body><div class="mt-content-container" id="elm-main-content">' +
 			content +
 			"</div></body>",
 		{
