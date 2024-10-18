@@ -318,8 +318,6 @@ async function downloadPage(
 		.querySelector("body > .mt-content-container > footer.mt-content-footer")
 		?.remove();
 
-	// TODO: Replace <dl> with <details>
-
 	/*for (const element of document.querySelectorAll(".MathJax")) {
 		const container = document.createElement("div");
 		container.innerHTML = element.innerHTML;
@@ -353,6 +351,32 @@ async function downloadPage(
 
 	for (const element of document.querySelectorAll("style, script")) {
 		element.remove();
+	}
+
+	for (const element of document.querySelectorAll("dl")) {
+		const root = document.createElement("div");
+
+		let container;
+
+		for (const child of element.children) {
+			if (child.tagName == "DT" && child.innerHTML.trim()) {
+				container = document.createElement("details");
+
+				const title = document.createElement("summary");
+				title.innerHTML = child.innerHTML;
+
+				container.appendChild(title);
+
+				root.appendChild(container);
+			} else if (child.tagName == "DD" && container) {
+				const wrapper = document.createElement("div");
+				wrapper.innerHTML = child.innerHTML;
+
+				container.appendChild(wrapper);
+			}
+		}
+
+		element.replaceWith(root);
 	}
 
 	document.body.appendChild(document.createElement("br"));
