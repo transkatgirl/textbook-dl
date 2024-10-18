@@ -349,7 +349,9 @@ async function downloadPage(
 		element.replaceWith(span);
 	}*/
 
-	for (const element of document.querySelectorAll("style, script")) {
+	for (const element of document.querySelectorAll(
+		"style, script, .hideprint"
+	)) {
 		element.remove();
 	}
 
