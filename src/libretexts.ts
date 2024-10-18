@@ -266,13 +266,7 @@ async function downloadPage(
 		});
 	}
 
-	scrollToSmoothly(document.body.scrollHeight, document.body.scrollHeight)
-
-	for (const element of document.querySelectorAll(
-		".MathJax_Preview, .MathJax_Display"
-	)) {
-		element.remove();
-	}
+	scrollToSmoothly(document.body.scrollHeight, document.body.scrollHeight/1.5)
 
 	for (const element of document.querySelectorAll(".MathJax")) {
 		const container = document.createElement("div");
@@ -283,6 +277,12 @@ async function downloadPage(
 		if (math) {
 			element.replaceWith(math);
 		}
+	}
+
+	for (const element of document.querySelectorAll(
+		".MathJax_Preview, .MathJax_Display"
+	)) {
+		element.remove();
 	}
 
 	for (const element of document.querySelectorAll(".glossarizer_replaced")) {
