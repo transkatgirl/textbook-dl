@@ -10,7 +10,7 @@ import path from "path";
 //   - https://pro.fontawesome.com/releases/v5.10.1/webfonts/fa-regular-400.woff2
 // - shared(?) inline page CSS (last retrieved on Oct 15 2024)
 // - custom CSS:
-//     body{margin: 1lh}
+//     body{margin:1lh}details summary{color:#0372a6;cursor:pointer;margin:1lh 0}
 
 export async function download(address: URL) {
 	console.log("Starting WebDriver...");
