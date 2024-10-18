@@ -243,7 +243,32 @@ async function downloadPage(
 		By.css("#elm-main-content > .mt-content-container")
 	);
 
-	await driver.executeScript(`for (const element of document.querySelectorAll(
+	await driver.executeScript(`
+	// Copied from https://stackoverflow.com/a/51689657
+	function scrollToSmoothly(pos, time) {
+		var currentPos = window.pageYOffset;
+		var start = null;
+		if(time == null) time = 500;
+		pos = +pos, time = +time;
+		window.requestAnimationFrame(function step(currentTime) {
+			start = !start ? currentTime : start;
+			var progress = currentTime - start;
+			if (currentPos < pos) {
+				window.scrollTo(0, ((pos - currentPos) * progress / time) + currentPos);
+			} else {
+				window.scrollTo(0, currentPos - ((currentPos - pos) * progress / time));
+			}
+			if (progress < time) {
+				window.requestAnimationFrame(step);
+			} else {
+				window.scrollTo(0, pos);
+			}
+		});
+	}
+
+	scrollToSmoothly(document.body.scrollHeight, document.body.scrollHeight)
+
+	for (const element of document.querySelectorAll(
 		".MathJax_Preview, .MathJax_Display"
 	)) {
 		element.remove();
@@ -265,7 +290,8 @@ async function downloadPage(
 		span.innerHTML = element.innerHTML;
 
 		element.replaceWith(span);
-	}`);
+	}
+	`);
 
 	const content = await main.getAttribute("innerHTML");
 
