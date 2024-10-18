@@ -351,7 +351,7 @@ async function downloadPage(
 	}*/
 
 	for (const element of document.querySelectorAll(
-		"style, script, .hideprint"
+		"style, script, canvas, .hideprint"
 	)) {
 		element.remove();
 	}
