@@ -318,6 +318,8 @@ async function downloadPage(
 		.querySelector("body > .mt-content-container > footer.mt-content-footer")
 		?.remove();
 
+	// TODO: Replace <dl> with <details>
+
 	/*for (const element of document.querySelectorAll(".MathJax")) {
 		const container = document.createElement("div");
 		container.innerHTML = element.innerHTML;
