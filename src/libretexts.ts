@@ -6,6 +6,7 @@ import path from "path";
 
 // Note: Libretexts CSS is from:
 // - https://a.mtstatic.com/@cache/layout/anonymous.css?_=93f1867715eb41aa364510e35ff484b2_bWF0aC5saWJyZXRleHRzLm9yZw==:site_4425 (last retrieved on Oct 15 2024)
+// - https://a.mtstatic.com/@style/out/icons/icomoon.woff?_=131b63b12b8cd40b1dc24c5fa97be9eb_bWF0aC5saWJyZXRleHRzLm9yZw==:site_4425 (last retrieved on Oct 18 2024)
 // - https://pro.fontawesome.com/releases/v5.10.1/css/all.css (last retrieved on Oct 15 2024)
 //   - https://pro.fontawesome.com/releases/v5.10.1/webfonts/fa-regular-400.woff2
 // - shared(?) inline page CSS (last retrieved on Oct 15 2024)
