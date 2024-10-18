@@ -243,8 +243,7 @@ async function downloadPage(
 		By.css("#elm-main-content > .mt-content-container")
 	);
 
-	await driver.executeScript(`
-	// Copied from https://stackoverflow.com/a/51689657
+	/*await driver.executeScript(`// Copied from https://stackoverflow.com/a/51689657
 	function scrollToSmoothly(pos, time) {
 		var currentPos = window.pageYOffset;
 		var start = null;
@@ -266,8 +265,9 @@ async function downloadPage(
 		});
 	}
 
-	scrollToSmoothly(document.body.scrollHeight, document.body.scrollHeight/1.5)
+	scrollToSmoothly(document.body.scrollHeight, document.body.scrollHeight/1.5)`);*/
 
+	await driver.executeScript(`
 	for (const element of document.querySelectorAll(".MathJax")) {
 		const container = document.createElement("div");
 		container.innerHTML = element.innerHTML;
@@ -275,7 +275,14 @@ async function downloadPage(
 		const math = container.querySelector("math");
 
 		if (math) {
-			element.replaceWith(math);
+			if (
+				element.parentElement?.classList.contains("MathJax_Preview") ||
+				element.parentElement?.classList.contains("MathJax_Display")
+			) {
+				element.parentElement.replaceWith(math);
+			} else {
+				element.replaceWith(math);
+			}
 		}
 	}
 
@@ -311,21 +318,28 @@ async function downloadPage(
 		.querySelector("body > .mt-content-container > footer.mt-content-footer")
 		?.remove();
 
-	/*for (const element of document.querySelectorAll(
-		".MathJax_Preview, .MathJax_Display"
-	)) {
-		element.remove();
-	}
-
-	for (const element of document.querySelectorAll(".MathJax")) {
+	/*for (const element of document.querySelectorAll(".MathJax")) {
 		const container = document.createElement("div");
 		container.innerHTML = element.innerHTML;
 
 		const math = container.querySelector("math");
 
 		if (math) {
-			element.replaceWith(math);
+			if (
+				element.parentElement?.classList.contains("MathJax_Preview") ||
+				element.parentElement?.classList.contains("MathJax_Display")
+			) {
+				element.parentElement.replaceWith(math);
+			} else {
+				element.replaceWith(math);
+			}
 		}
+	}
+
+	for (const element of document.querySelectorAll(
+		".MathJax_Preview, .MathJax_Display"
+	)) {
+		element.remove();
 	}
 
 	for (const element of document.querySelectorAll(".glossarizer_replaced")) {
