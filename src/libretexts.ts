@@ -387,7 +387,7 @@ async function downloadPage(
 
 	for (const element of document.querySelectorAll("a")) {
 		if (element.href.startsWith(root.href + "/")) {
-			element.href = element.href.slice(root.href.length + 1);
+			element.href = path.basename(new URL(element.href).pathname);
 		}
 	}
 
