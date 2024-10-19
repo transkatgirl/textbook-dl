@@ -6,11 +6,14 @@ import path from "path";
 
 // Note: OpenStax CSS is from https://openstax.org/rex/releases/v4/bdd6a22/static/css/main.7cf7796a.chunk.css (last retrieved on Sept 1 2024), then modified to remove custom fonts and add a 1em margin around the body element.
 
-export async function download(address: URL) {
+export async function download(address: URL, debug = false) {
 	console.log("Starting WebDriver...");
 
 	const options = new Options();
 	options.addArguments("--window-size=1600,1200");
+	if (!debug) {
+		options.addArguments("--headless");
+	}
 	const driver = await new Builder()
 		.forBrowser(Browser.CHROME)
 		.setChromeOptions(options)

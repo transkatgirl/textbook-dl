@@ -13,11 +13,14 @@ import path from "path";
 // - custom CSS:
 //     body{margin:1lh}details summary{color:#0372a6;cursor:pointer;margin:1lh 0}
 
-export async function download(address: URL) {
+export async function download(address: URL, debug = false) {
 	console.log("Starting WebDriver...");
 
 	const options = new Options();
 	options.addArguments("--window-size=1600,1200");
+	if (!debug) {
+		options.addArguments("--headless");
+	}
 	const driver = await new Builder()
 		.forBrowser(Browser.CHROME)
 		.setChromeOptions(options)
