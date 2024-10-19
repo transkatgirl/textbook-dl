@@ -382,6 +382,8 @@ async function downloadPage(
 		element.replaceWith(root);
 	}
 
+	// TODO: Archive <iframe> elements
+
 	document.body.appendChild(document.createElement("br"));
 
 	console.log("Archived " + address.href);
