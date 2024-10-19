@@ -165,7 +165,10 @@ export async function buildTextbook(input: RawTextbook) {
 
 				const body = await response.arrayBuffer();
 
-				await writeFile(path.join(mediaRoot, filename), new DataView(body));
+				await writeFile(
+					path.join(mediaRoot, decodeURIComponent(filename)),
+					new DataView(body)
+				);
 				image.src = "media/" + filename;
 				mediaItems.set("media/" + filename, mime);
 			} else {
