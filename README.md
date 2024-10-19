@@ -17,12 +17,12 @@ npm run start [book url]
 
 ### Supported URLs
 
-- https://openstax.org/books/* (OpenStax online textbook viewer)
-<!-- - https://*.libretexts.org/[Bookshelves,Courses]/* (LibreTexts Libraries) -->
+- openstax.org/books/\* (OpenStax online textbook viewer)
+- \*.libretexts.org/\[Bookshelves,Courses\]/* (LibreTexts Libraries)
+	- Note: The LibreTexts downloader is a work in progress and may fail with some textbooks.
 
 #### Coming Soon
 
 The below sites are not yet supported, but support for them may be implemented in the future:
 
-- LibreTexts (WIP)
 - CK-12
