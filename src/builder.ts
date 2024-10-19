@@ -90,6 +90,8 @@ export async function buildTextbook(input: RawTextbook) {
 
 		console.log("Rewriting links...");
 
+		const pathmod = path;
+
 		for (const anchor of document.getElementsByTagName("a")) {
 			const href = url.parse(anchor.href);
 
@@ -98,6 +100,10 @@ export async function buildTextbook(input: RawTextbook) {
 			}
 
 			let path = href.pathname;
+
+			if (path.startsWith(input.meta.url.href) + "/") {
+				path = pathmod.basename(new URL(anchor.href).pathname);
+			}
 
 			if (path.startsWith("/")) {
 				path = path.substring(1);
