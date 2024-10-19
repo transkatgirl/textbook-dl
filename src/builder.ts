@@ -217,7 +217,10 @@ export async function buildTextbook(input: RawTextbook) {
 
 				const body = await response.arrayBuffer();
 
-				await writeFile(path.join(mediaRoot, filename), new DataView(body));
+				await writeFile(
+					path.join(mediaRoot, decodeURIComponent(filename)),
+					new DataView(body)
+				);
 				audio.src = "media/" + filename;
 				mediaItems.set("media/" + filename, mime);
 			} else {
@@ -291,7 +294,7 @@ export async function buildTextbook(input: RawTextbook) {
 			throw "Unimplemented element: <canvas>";
 		}
 
-		const newFilename = transformFilename(filename);
+		const newFilename = transformFilename(decodeURIComponent(filename));
 
 		console.log("Serializing page as " + newFilename + "...");
 
