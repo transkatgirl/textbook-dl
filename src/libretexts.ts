@@ -384,6 +384,8 @@ async function downloadPage(
 
 	// TODO: Archive <iframe> elements
 
+	// TODO: Rewrite anchor hrefs
+
 	document.body.appendChild(document.createElement("br"));
 
 	console.log("Archived " + address.href);
