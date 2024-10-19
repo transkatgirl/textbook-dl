@@ -271,7 +271,7 @@ async function downloadPage(
 
 	scrollToSmoothly(document.body.scrollHeight, document.body.scrollHeight/1.5)`);*/
 
-	await driver.executeScript(`
+	/*await driver.executeScript(`
 	for (const element of document.querySelectorAll(".MathJax")) {
 		const container = document.createElement("div");
 		container.innerHTML = element.innerHTML;
@@ -302,7 +302,7 @@ async function downloadPage(
 
 		element.replaceWith(span);
 	}
-	`);
+	`);*/
 
 	const content = await main.getAttribute("innerHTML");
 
@@ -322,7 +322,7 @@ async function downloadPage(
 		.querySelector("body > .mt-content-container > footer.mt-content-footer")
 		?.remove();
 
-	/*for (const element of document.querySelectorAll(".MathJax")) {
+	for (const element of document.querySelectorAll(".MathJax")) {
 		const container = document.createElement("div");
 		container.innerHTML = element.innerHTML;
 
@@ -351,7 +351,7 @@ async function downloadPage(
 		span.innerHTML = element.innerHTML;
 
 		element.replaceWith(span);
-	}*/
+	}
 
 	for (const element of document.querySelectorAll(
 		"style, script, canvas, .hideprint"
