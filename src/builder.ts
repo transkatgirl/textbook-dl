@@ -93,6 +93,10 @@ export async function buildTextbook(input: RawTextbook) {
 		const pathmod = path;
 
 		for (const anchor of document.getElementsByTagName("a")) {
+			if (anchor.href.startsWith(input.meta.url.href) + "/") {
+				anchor.href = pathmod.basename(new URL(anchor.href).pathname);
+			}
+
 			const href = url.parse(anchor.href);
 
 			if (!href || href.host || href.protocol || !href.pathname) {
@@ -100,10 +104,6 @@ export async function buildTextbook(input: RawTextbook) {
 			}
 
 			let path = href.pathname;
-
-			if (path.startsWith(input.meta.url.href) + "/") {
-				path = pathmod.basename(new URL(anchor.href).pathname);
-			}
 
 			if (path.startsWith("/")) {
 				path = path.substring(1);
