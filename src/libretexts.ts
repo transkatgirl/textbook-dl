@@ -211,7 +211,7 @@ async function downloadPages(
 		if (item.url) {
 			const filename = path.basename(item.url.pathname);
 
-			const download = await downloadPage(driver, item.url);
+			const download = await downloadPage(driver, item.url, meta.url);
 
 			if (download) {
 				downloaded.push([filename, download]);
@@ -232,7 +232,8 @@ async function downloadPages(
 
 async function downloadPage(
 	driver: WebDriver,
-	address: URL
+	address: URL,
+	root: URL
 ): Promise<string | void> {
 	console.log("\nLoading URL " + address.href);
 	await driver.get(address.href);
@@ -384,16 +385,9 @@ async function downloadPage(
 
 	// TODO: Archive <iframe> elements
 
-	const addressHref = address.href;
-	let addressLength = addressHref.length;
-
-	if (!addressHref.endsWith("/")) {
-		addressLength += 1;
-	}
-
 	for (const element of document.querySelectorAll("a")) {
-		if (element.href.startsWith(addressHref)) {
-			element.href = element.href.slice(addressLength);
+		if (element.href.startsWith(root.href + "/")) {
+			element.href = element.href.slice(root.href.length + 1);
 		}
 	}
 

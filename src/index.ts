@@ -57,7 +57,8 @@ switch (address.host) {
 		if (
 			!(
 				address.pathname.startsWith("/Courses/") ||
-				address.pathname.startsWith("/Bookshelves/")
+				address.pathname.startsWith("/Bookshelves/") ||
+				address.pathname.endsWith("/")
 			)
 		) {
 			console.log("Invalid URL!");
