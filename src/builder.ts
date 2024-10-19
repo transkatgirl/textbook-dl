@@ -300,6 +300,12 @@ export async function buildTextbook(input: RawTextbook) {
 			throw "Unimplemented element: <canvas>";
 		}
 
+		for (const _ of document.querySelectorAll(
+			".MathJax, .MathJax_Preview, .MathJax_Display, .MathJax_Processing"
+		)) {
+			throw "MathJax must be transformed to <math>";
+		}
+
 		const newFilename = transformFilename(decodeURIComponent(filename));
 
 		console.log("Serializing page as " + newFilename + "...");
