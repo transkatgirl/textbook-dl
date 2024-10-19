@@ -26,3 +26,4 @@ npm run start [book url]
 The below sites are not yet supported, but support for them may be implemented in the future:
 
 - CK-12
+- Wikibooks
