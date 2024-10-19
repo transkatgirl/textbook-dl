@@ -18,5 +18,6 @@ npm run start [book url]
 ### Supported URLs
 
 - https://openstax.org/books/* (OpenStax online textbook viewer)
+<!-- - https://*.libretexts.org/[Bookshelves,Courses]/* (LibreTexts Libraries) -->
 
 support for LibreTexts coming soon
