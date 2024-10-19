@@ -20,4 +20,9 @@ npm run start [book url]
 - https://openstax.org/books/* (OpenStax online textbook viewer)
 <!-- - https://*.libretexts.org/[Bookshelves,Courses]/* (LibreTexts Libraries) -->
 
-support for LibreTexts coming soon
+#### Coming Soon
+
+The below sites are not yet supported, but support for them may be implemented in the future:
+
+- LibreTexts (WIP)
+- CK-12
