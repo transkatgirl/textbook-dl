@@ -384,7 +384,18 @@ async function downloadPage(
 
 	// TODO: Archive <iframe> elements
 
-	// TODO: Rewrite anchor hrefs
+	const addressHref = address.href;
+	let addressLength = addressHref.length;
+
+	if (!addressHref.endsWith("/")) {
+		addressLength += 1;
+	}
+
+	for (const element of document.querySelectorAll("a")) {
+		if (element.href.startsWith(addressHref)) {
+			element.href = element.href.slice(addressLength);
+		}
+	}
 
 	document.body.appendChild(document.createElement("br"));
 
